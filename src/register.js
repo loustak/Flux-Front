@@ -1,19 +1,21 @@
 import React from 'react';
+import { withRouter } from "react-router-dom";
 import {ApiPath} from './index.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, FormFeedback, Alert } from 'reactstrap';
+import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, Alert, FormFeedback } from 'reactstrap';
 
-export class Register extends React.Component {
+class RegisterPath extends React.Component {
+
   render() {
     return (
       <Jumbotron fluid>
         <Container fluid>
-          <h1 className="display-3">Sign-in</h1>
+          <h1 className="display-3">Register</h1>
           <p className="lead">So exciting ! Only a few more steps to join us !</p>
 
           <ApiPath.Consumer>
-            {apiPath => <FormValidator apiPath={apiPath} />}
+            {apiPath => <FormValidator history={this.props.history} apiPath={apiPath} />}
           </ApiPath.Consumer>
 
         </Container>
@@ -21,6 +23,8 @@ export class Register extends React.Component {
     )
   }
 }
+
+export const Register = withRouter(RegisterPath);
 
 class FormValidator extends React.Component {
 
@@ -30,6 +34,8 @@ class FormValidator extends React.Component {
       email: '',
       username: '',
       password: '',
+      passwordAgain: '',
+      passwordDontMatch: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,8 +43,20 @@ class FormValidator extends React.Component {
 
   handleChange(event) {
     var change = {};
-    change[event.target.name] = event.target.value;
-    this.setState(change);
+    const name = event.target.name;
+    const value = event.target.value
+    change[name] = value;
+    this.setState(change, () => { this.validateField(name, value) });
+  }
+
+  validateField(name, value) {
+    if (name === 'password' || name === 'passwordAgain') {
+      var match = this.state.password !== this.state.passwordAgain;
+
+      if (this.state.passwordAgain.length > 0) {
+        this.setState({passwordDontMatch: match});
+      }
+    }
   }
 
   handleSubmit(event) {
@@ -53,28 +71,40 @@ class FormValidator extends React.Component {
         username: this.state.username,
         password: this.state.password
       })
-    }).then(function(response) {
-      return response.json();
-    }).then(function(data) {
-      console.log(data);
-      if (data.errors) {
-        if (data.errors.email) {
-
-        }
-      } else {
-        console.log('success:' + data);
-      }
     })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.errors) {
+          this.errorHandler(result.errors);
+        } else {
+          this.props.history.push('/sign-in')
+        }
+      });
+  }
+
+  errorHandler(error) {
+    var errorMessage = 'Something went wrong';
+
+    if (error.email) {
+      errorMessage = 'Oh no, this email is already used';
+    } else if (error.password) {
+      errorMessage = 'Oups, the password is too short...';
+    }
+
+    var errorElement = <Alert color="danger">{errorMessage}</Alert>
+    this.setState({errorElement: errorElement});
   }
 
   render() {
     return(
       <Form onSubmit={this.handleSubmit}>
+        {this.state.errorElement}
+
         <FormGroup>
           <Label for="email">Email</Label>
           <Input type="email" name="email" id="email" onChange={this.handleChange}
             placeholder="A nice and neat email address" autoComplete="email" required />
-          <FormFeedback valid>This email is availabe hura !</FormFeedback>
         </FormGroup>
 
         <FormGroup>
@@ -91,13 +121,16 @@ class FormValidator extends React.Component {
 
         <FormGroup>
           <Label for="passwordAgain">Password again</Label>
-          <Input type="password" name="passwordAgain" id="password-again" onChange={this.handleChange}
+          <Input invalid={this.state.passwordDontMatch} type="password" name="passwordAgain" 
+            id="password-again" onChange={this.handleChange}
             placeholder="Just in case you made a typo" autoComplete="password" required />
+          <FormFeedback>Humm, it looks like password don't match</FormFeedback>
         </FormGroup>
 
         <div className="text-center">
           <Button outline color="primary" className="px-5">Submit</Button>
         </div>
+
       </Form>
     )
   }

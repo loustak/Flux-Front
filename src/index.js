@@ -10,6 +10,7 @@ import { Container } from 'reactstrap';
 import { FluxNavBar } from './navbar.js'
 import { Home } from './home.js'
 import { Register } from './register.js'
+import { SignIn } from './sign-in.js'
 
 export const ApiPath = React.createContext('');
 
@@ -23,7 +24,8 @@ class App extends React.Component {
             <FluxNavBar />
             <Container>
               <Route exact={true} path="/" component={Home} />
-              <Route exact={true} path="/sign-in/" component={Register} />
+              <Route exact={true} path="/register/" component={Register} />
+              <Route exact={true} path="/sign-in/" component={SignIn} />
             </Container>
           </ApiPath.Provider>
         </div>

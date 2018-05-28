@@ -25,3 +25,8 @@
 .jumbotron {
   background-color: transparent;
 }
+
+.alert-danger {
+  color: #ecf0f1;
+  background-color: #c0392b;
+}

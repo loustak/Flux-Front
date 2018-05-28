@@ -36,10 +36,10 @@ export class FluxNavBar extends React.Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink href="/register/">Register</NavLink>
+                <NavLink href="/sign-in/">Sign-in</NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="/sign-in/">Sign-in</NavLink>
+                <NavLink href="/register/">Register</NavLink>
               </NavItem>
             </Nav>
           </Collapse>
