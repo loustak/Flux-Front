@@ -1,4 +1,5 @@
 import React from 'react';
+import {ApiPath} from './index.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, FormFeedback } from 'reactstrap';
@@ -11,7 +12,9 @@ export class Register extends React.Component {
           <h1 className="display-3">Sign-in</h1>
           <p className="lead">So exciting ! Only a few more step to join us !</p>
 
-          <FormValidator />
+          <ApiPath.Consumer>
+            {apiPath => <FormValidator apiPath={apiPath} />}
+          </ApiPath.Consumer>
 
         </Container>
       </Jumbotron>
@@ -20,10 +23,11 @@ export class Register extends React.Component {
 }
 
 class FormValidator extends React.Component {
+
   render() {
     return(
-      <Form>
-        <EmailValidator />
+        <Form>
+        <EmailValidator apiPath={this.props.apiPath} />
         <FormGroup>
           <Label for="password">Password</Label>
           <Input type="password" name="password" id="password" 
@@ -59,8 +63,7 @@ class EmailValidator extends React.Component {
 
   checkValidity() {
     if (this.state.email.length > 0) {
-      console.log("ok");
-      this.setState({valid: true});
+      
     }
   }
 

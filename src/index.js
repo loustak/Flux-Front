@@ -11,17 +11,21 @@ import { FluxNavBar } from './navbar.js'
 import { Home } from './home.js'
 import { Register } from './register.js'
 
+export const ApiPath = React.createContext('');
+
 class App extends React.Component {
   
   render() {
     return (
       <Router>
         <div id="app-container">
-          <FluxNavBar />
-          <Container>
-            <Route exact={true} path="/" component={Home} />
-            <Route exact={true} path="/sign-in/" component={Register} />
-          </Container>
+          <ApiPath.Provider value="https://flux-polytech.herokuapp.com/">
+            <FluxNavBar />
+            <Container>
+              <Route exact={true} path="/" component={Home} />
+              <Route exact={true} path="/sign-in/" component={Register} />
+            </Container>
+          </ApiPath.Provider>
         </div>
       </Router>
     );
