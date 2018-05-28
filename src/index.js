@@ -2,34 +2,24 @@
 import React from 'react';
 // To use ReactDOM
 import ReactDOM from 'react-dom';
-// To use route inside React on the web
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { FluxRouter as Router } from './router.js'
 
-import { Container } from 'reactstrap';
-
-import { FluxNavBar } from './navbar.js'
-import { Home } from './home.js'
-import { Register } from './register.js'
-import { SignIn } from './sign-in.js'
-
-export const ApiPath = React.createContext('');
+export const ApiPath = React.createContext();
+export const Logged = React.createContext();
 
 class App extends React.Component {
-  
+
   render() {
     return (
-      <Router>
-        <div id="app-container">
-          <ApiPath.Provider value="http://127.0.0.1:4000">
-            <FluxNavBar />
-            <Container>
-              <Route exact={true} path="/" component={Home} />
-              <Route exact={true} path="/register/" component={Register} />
-              <Route exact={true} path="/sign-in/" component={SignIn} />
-            </Container>
-          </ApiPath.Provider>
-        </div>
-      </Router>
+      <ApiPath.Provider value="http://127.0.0.1:4000">
+        <Logged.Provider>
+
+          <ApiPath.Consumer>
+              {apiPath => <Router apitPath={apiPath} />}
+          </ApiPath.Consumer>
+
+        </Logged.Provider>
+      </ApiPath.Provider>
     );
   }
 }
