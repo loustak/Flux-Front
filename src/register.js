@@ -2,7 +2,7 @@ import React from 'react';
 import {ApiPath} from './index.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, FormFeedback } from 'reactstrap';
+import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, FormFeedback, Alert } from 'reactstrap';
 
 export class Register extends React.Component {
   render() {
@@ -10,7 +10,7 @@ export class Register extends React.Component {
       <Jumbotron fluid>
         <Container fluid>
           <h1 className="display-3">Sign-in</h1>
-          <p className="lead">So exciting ! Only a few more step to join us !</p>
+          <p className="lead">So exciting ! Only a few more steps to join us !</p>
 
           <ApiPath.Consumer>
             {apiPath => <FormValidator apiPath={apiPath} />}
@@ -24,57 +24,81 @@ export class Register extends React.Component {
 
 class FormValidator extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      username: '',
+      password: '',
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    var change = {};
+    change[event.target.name] = event.target.value;
+    this.setState(change);
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    fetch(this.props.apiPath + '/api/users', {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.state.email,
+        username: this.state.username,
+        password: this.state.password
+      })
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      console.log(data);
+      if (data.errors) {
+        if (data.errors.email) {
+
+        }
+      } else {
+        console.log('success:' + data);
+      }
+    })
+  }
+
   render() {
     return(
-        <Form>
-        <EmailValidator apiPath={this.props.apiPath} />
+      <Form onSubmit={this.handleSubmit}>
+        <FormGroup>
+          <Label for="email">Email</Label>
+          <Input type="email" name="email" id="email" onChange={this.handleChange}
+            placeholder="A nice and neat email address" autoComplete="email" required />
+          <FormFeedback valid>This email is availabe hura !</FormFeedback>
+        </FormGroup>
+
+        <FormGroup>
+          <Label for="username">Display name</Label>
+          <Input type="username" name="username" id="username" onChange={this.handleChange}
+            placeholder="What's your name?" autoComplete="name" required />
+        </FormGroup>
+
         <FormGroup>
           <Label for="password">Password</Label>
-          <Input type="password" name="password" id="password" 
-            placeholder="Chuuuuut... Keep it secret" autoComplete="password" />
+          <Input type="password" name="password" id="password" onChange={this.handleChange}
+            placeholder="Chuuuuut... Keep it secret" autoComplete="password" required />
         </FormGroup>
+
         <FormGroup>
           <Label for="passwordAgain">Password again</Label>
-          <Input type="password" name="passwordAgain" id="password-again" 
-            placeholder="Just in case you made a typo" autoComplete="password" />
+          <Input type="password" name="passwordAgain" id="password-again" onChange={this.handleChange}
+            placeholder="Just in case you made a typo" autoComplete="password" required />
         </FormGroup>
+
         <div className="text-center">
           <Button outline color="primary" className="px-5">Submit</Button>
         </div>
       </Form>
-    )
-  }
-}
-
-class EmailValidator extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {email: '', valid: false};
-    this.onChange = this.onChange.bind(this);
-    this.checkValidity = this.checkValidity.bind(this);
-  }
-
-  onChange(event) {
-    this.setState({email: event.target.value});
-    clearTimeout(this.timer);
-    this.timer = setTimeout(this.checkValidity, 2000);
-  }
-
-  checkValidity() {
-    if (this.state.email.length > 0) {
-      
-    }
-  }
-
-  render() {
-    return(
-      <FormGroup>
-        <Label for="email">Email</Label>
-        <Input valid={this.state.valid} type="email" name="email" id="email" onChange={this.onChange}
-          placeholder="A nice and neat email address" autoComplete="email" />
-        <FormFeedback valid>This email is availabe hura !</FormFeedback>
-      </FormGroup>
     )
   }
 }

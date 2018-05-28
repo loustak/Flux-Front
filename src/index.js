@@ -19,7 +19,7 @@ class App extends React.Component {
     return (
       <Router>
         <div id="app-container">
-          <ApiPath.Provider value="https://flux-polytech.herokuapp.com/">
+          <ApiPath.Provider value="http://127.0.0.1:4000">
             <FluxNavBar />
             <Container>
               <Route exact={true} path="/" component={Home} />
