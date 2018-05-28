@@ -1,0 +1,27 @@
+
+:root {
+  --primary: #121212;
+}
+
+.container-fluid {
+  width: 65%;
+}
+
+.btn-primary {
+  color: #121212;
+  border-color: #121212;
+}
+
+.btn-outline-primary {
+  color: #121212;
+  border-color: #121212;
+}
+
+.btn-outline-primary:hover {
+  background-color: #121212;
+  border-color: #121212;
+}
+
+.jumbotron {
+  background-color: transparent;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
-import './bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import './override.css';
 import { 
   Collapse,
   Navbar,
