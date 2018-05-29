@@ -58,24 +58,69 @@ input[type], textarea {
 }
 
 .home-auth-container {
-  
+  margin: 0;
+  padding-left: 275px;
 }
+
+/* Side bar management */
 
 /* Community side bar */
 .community-sidebar-wrapper {
   background: #121212;
-  min-width: 250px;
-  max-width: 250px;
+  left: 0;
+  position: fixed;
+  overflow-y: auto;
+  transition: all 0.5s ease;
+  z-index: 1000;
   height: 100%;
+  width: 75px;
 }
 
-.community-sidebar {
+.sidebar-wrapper .nav-item {
+  width: 100%;
+  text-align: center;
+}
 
+.sidebar-wrapper .nav-item a {
+  color: #fff;
+}
+
+/* Discussion side bar */
+.discussion-sidebar-wrapper {
+  background: #626262;
+  left: 75px;
+  position: fixed;
+  overflow-y: auto;
+  transition: all 1s ease;
+  z-index: 1000;
+  height: 100%;
+  width: 200px;
+}
+
+.sidebar-transition-show {
+  left: 275px;
+  transition: left 1s ease;
+}
+
+.sidebar-transition-hide .community-sidebar-wrapper {
+  left: -75px;
+  transition: left 1s ease;
+}
+
+.sidebar-transition-hide .discussion-sidebar-wrapper {
+  left: -200px;
+  transition: left 1s ease;
+}
+
+.discussion-sidebar-wrapper .nav-item {
+  text-align: left;
+}
+
+.main-content {
+  position: relative;
 }
 
 /* Message input */
 .message-form {
-  left: auto;
-  right: auto;
-  width: 100%;
+
 }
