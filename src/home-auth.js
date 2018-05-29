@@ -28,12 +28,12 @@ export class HomeAuth extends React.Component {
   render() {
     return(
       <React.Fragment>
-        <Container fluid className="home-auth-container h-100">
+        <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
           
           <SideBar className={this.state.className} />
 
           <div className="main-content">
-            <Container fluid>
+            <Container fluid >
               <Button onClick={this.toggle}>Test</Button>
             </Container>
           </div>

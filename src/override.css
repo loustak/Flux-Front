@@ -57,12 +57,18 @@ input[type], textarea {
   border-color: #121212;
 }
 
+/* Home auth main container */
 .home-auth-container {
   margin: 0;
+  padding: 0;
   padding-left: 275px;
+  transition: padding-left 1s ease;
 }
 
-/* Side bar management */
+.sidebar-transition-hide.home-auth-container {
+  padding-left: 0px;
+  transition: padding-left 1s ease;
+}
 
 /* Community side bar */
 .community-sidebar-wrapper {
@@ -95,11 +101,6 @@ input[type], textarea {
   z-index: 1000;
   height: 100%;
   width: 200px;
-}
-
-.sidebar-transition-show {
-  left: 275px;
-  transition: left 1s ease;
 }
 
 .sidebar-transition-hide .community-sidebar-wrapper {
