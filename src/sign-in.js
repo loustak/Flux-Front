@@ -1,10 +1,13 @@
 import React from 'react';
-import {ApiPath} from './index.js'
+import {ApiPath} from './index.js';
+import { withRouter } from 'react-router-dom';
+import { withCookies } from 'react-cookie';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
 
-export class SignIn extends React.Component {
+export class SignInPath extends React.Component {
+
   render() {
     return (
       <Jumbotron fluid>
@@ -13,7 +16,7 @@ export class SignIn extends React.Component {
           <p className="lead">Glad to see you again !</p>
 
           <ApiPath.Consumer>
-            {apiPath => <FormValidator apiPath={apiPath} />}
+            {apiPath => <WithCookiesFormValidator history={this.props.history} apiPath={apiPath} />}
           </ApiPath.Consumer>
 
         </Container>
@@ -21,6 +24,8 @@ export class SignIn extends React.Component {
     )
   }
 }
+
+export const SignIn = withRouter(SignInPath);
 
 class FormValidator extends React.Component {
 
@@ -58,10 +63,12 @@ class FormValidator extends React.Component {
     .then(
       (result) => {
         if (result.errors) {
+          // Login failed display the error
           this.errorHandler(result.errors);
         } else {
-          console.log(result);
-          //this.props.history.push('/sign-in')
+          // Logged, save the given jwt token
+          this.props.cookies.set('token', result.token, {path: '/'});
+          this.props.history.push('/');
         }
       });
   }
@@ -72,6 +79,8 @@ class FormValidator extends React.Component {
     var errorElement = <Alert color="danger">{errorMessage}</Alert>
     this.setState({errorElement: errorElement});
   }
+
+  // TODO: Display a success message when the user registered successfully
 
   render() {
     return(
@@ -99,3 +108,5 @@ class FormValidator extends React.Component {
     )
   }
 }
+
+const WithCookiesFormValidator = withCookies(FormValidator)

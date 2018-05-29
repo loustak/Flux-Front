@@ -2,7 +2,7 @@
 import React from 'react';
 // To use ReactDOM
 import ReactDOM from 'react-dom';
-import { FluxRouter as Router } from './router.js'
+import { FluxRouter } from './router.js'
 
 export const ApiPath = React.createContext();
 export const Logged = React.createContext();
@@ -15,7 +15,7 @@ class App extends React.Component {
         <Logged.Provider>
 
           <ApiPath.Consumer>
-              {apiPath => <Router apitPath={apiPath} />}
+            {apiPath => <FluxRouter apitPath={apiPath} />}
           </ApiPath.Consumer>
 
         </Logged.Provider>
