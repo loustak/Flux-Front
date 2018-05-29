@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import {ApiPath} from './index.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Jumbotron, Container, Button, Form, FormGroup, Label, Input, Alert, FormFeedback } from 'reactstrap';
+import { Jumbotron, Button, Form, FormGroup, Label, Input, Alert, FormFeedback } from 'reactstrap';
 
 class RegisterPath extends React.Component {
 

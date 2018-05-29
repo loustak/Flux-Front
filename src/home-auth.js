@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Form, Input, Row, Col } from 'reactstrap';
+import { Form, Container, Input, Row, Col } from 'reactstrap';
 import SideBar from './sidebar.js';
 
 export class HomeAuth extends React.Component {
@@ -9,17 +9,16 @@ export class HomeAuth extends React.Component {
   render() {
     return(
       <React.Fragment>
-        <div class="container-fluid">
-        <Row>
-          <Col xs="2">
-            <SideBar />
-          </Col>
-          <Col xs="9">
-            <h1>Hello</h1>
-            <BottomInputForm />
-          </Col>
-        </Row>
-        </div>
+        <Container fluid className="home-auth-container h-100">
+          <Row className="h-100">
+            <Col xs="2" className="community-sidebar-wrapper">
+              <SideBar />
+            </Col>
+            <Col xs="10">
+              <BottomInputForm />
+            </Col>
+          </Row>
+        </Container>
       </React.Fragment>
     )
   }
@@ -29,7 +28,9 @@ class BottomInputForm extends React.Component {
 
   render() {
     return (
-      <h1>Lel</h1>
+      <Form className="fixed-bottom message-form">
+        <Input className="rounded-0" autoFocus="autofocus" placeholder="Type something..." />
+      </Form>
     )
   }
 }

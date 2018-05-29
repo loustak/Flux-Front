@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Jumbotron, Container } from 'reactstrap';
+import { Jumbotron } from 'reactstrap';
 
 export class HomeVisitor extends React.Component {
   //<img src={process.env.PUBLIC_URL + 'security.svg'} className="pull-left vertical-align" />

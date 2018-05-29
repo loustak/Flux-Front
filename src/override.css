@@ -1,3 +1,6 @@
+html, body, #root {
+  height: 100%;
+}
 
 :root {
   --primary: #121212;
@@ -54,8 +57,25 @@ input[type], textarea {
   border-color: #121212;
 }
 
-/* Main side bar */
-#message-form {
-  /*width: 100%;*/
-  background-color: red;
+.home-auth-container {
+  
+}
+
+/* Community side bar */
+.community-sidebar-wrapper {
+  background: #121212;
+  min-width: 250px;
+  max-width: 250px;
+  height: 100%;
+}
+
+.community-sidebar {
+
+}
+
+/* Message input */
+.message-form {
+  left: auto;
+  right: auto;
+  width: 100%;
 }

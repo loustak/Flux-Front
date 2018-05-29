@@ -52,7 +52,6 @@ class RouterLogged extends React.Component {
   render() {
     return(
       <React.Fragment>
-        <NavBarLogged />
         <Route exact={true} path="/" component={HomeAuth} />
       </React.Fragment>
     );
