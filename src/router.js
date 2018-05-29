@@ -1,12 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom'
-import { CookiesProvider, withCookies } from 'react-cookie'
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { CookiesProvider, withCookies } from 'react-cookie';
 import jwt_decode from 'jwt-decode';
-import { NavBarLogged, NavBarVisitor } from './navbar.js'
-import { Container } from 'reactstrap'
-import { HomeVisitor } from './home-visitor.js'
-import { Register } from './register.js'
-import { SignIn } from './sign-in.js'
+import { NavBarLogged, NavBarVisitor } from './navbar.js';
+import { Container } from 'reactstrap';
+import { HomeAuth } from './home-auth.js';
+import { HomeVisitor } from './home-visitor.js';
+import { Register } from './register.js';
+import { SignIn } from './sign-in.js';
 
 export class FluxRouter extends React.Component {
 
@@ -37,8 +38,6 @@ class Auth extends React.Component {
     // Did we success?
     const logged = decoded !== undefined;
 
-    console.log(logged);
-
     if (logged) {
       return <RouterLogged />
     }
@@ -54,9 +53,7 @@ class RouterLogged extends React.Component {
     return(
       <React.Fragment>
         <NavBarLogged />
-        <Container>
-          <h1>Logged</h1>
-        </Container>
+        <Route exact={true} path="/" component={HomeAuth} />
       </React.Fragment>
     );
   }
