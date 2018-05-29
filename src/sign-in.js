@@ -1,5 +1,5 @@
 import React from 'react';
-import {ApiPath} from './index.js';
+import { ApiPath } from './index.js';
 import { withRouter } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -11,7 +11,7 @@ export class SignInPath extends React.Component {
   render() {
     return (
       <Jumbotron fluid>
-        <Container fluid>
+        <div className="container-fluid flux-container">
           <h1 className="display-3">Sign-in</h1>
           <p className="lead">Glad to see you again !</p>
 
@@ -19,7 +19,7 @@ export class SignInPath extends React.Component {
             {apiPath => <WithCookiesFormValidator history={this.props.history} apiPath={apiPath} />}
           </ApiPath.Consumer>
 
-        </Container>
+        </div>
       </Jumbotron>
     )
   }

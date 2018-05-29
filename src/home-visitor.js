@@ -9,14 +9,14 @@ export class HomeVisitor extends React.Component {
   render() {
     return (
       <Jumbotron fluid>
-        <Container fluid>
+        <div className="container-fluid flux-container">
           <h1 className="display-3 text-uppercase font-weight-bold">flux</h1>
           <p className="lead">A fast an light unified exchange.</p>
 
           <p>Flux is made to be as secure as possible. We use the latest cryptographics 
           algorithms to encode your data from end to end in the most secure way.</p>
 
-        </Container>
+        </div>
       </Jumbotron>
     )
   }

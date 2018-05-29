@@ -3,7 +3,7 @@
   --primary: #121212;
 }
 
-.container-fluid {
+.flux-container {
   width: 65%;
 }
 
@@ -52,4 +52,10 @@ input[type], textarea {
   color: #fff;
   background-color: #121212;
   border-color: #121212;
+}
+
+/* Main side bar */
+#message-form {
+  /*width: 100%;*/
+  background-color: red;
 }

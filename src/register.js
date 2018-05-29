@@ -10,7 +10,7 @@ class RegisterPath extends React.Component {
   render() {
     return (
       <Jumbotron fluid>
-        <Container fluid>
+        <div className="container-fluid flux-container">
           <h1 className="display-3">Register</h1>
           <p className="lead">So exciting ! Only a few more steps to join us !</p>
 
@@ -18,7 +18,7 @@ class RegisterPath extends React.Component {
             {apiPath => <FormValidator history={this.props.history} apiPath={apiPath} />}
           </ApiPath.Consumer>
 
-        </Container>
+        </div>
       </Jumbotron>
     )
   }
