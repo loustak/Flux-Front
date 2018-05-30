@@ -11,7 +11,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <ApiPath.Provider value="https://flux-polytech.herokuapp.com/">
+      <ApiPath.Provider value="https://flux-polytech.herokuapp.com">
         <Logged.Provider>
 
           <ApiPath.Consumer>
