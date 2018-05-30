@@ -11,7 +11,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <ApiPath.Provider value="https://localhost:4000">
+      <ApiPath.Provider value="http://127.0.0.1:4000">
         <Logged.Provider>
 
           <ApiPath.Consumer>

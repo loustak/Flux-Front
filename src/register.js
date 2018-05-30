@@ -80,6 +80,10 @@ class FormValidator extends React.Component {
         } else {
           this.props.history.push('/sign-in')
         }
+      },
+
+      (error) => {
+        this.errorHandler(error);
       });
   }
 
@@ -90,6 +94,8 @@ class FormValidator extends React.Component {
       errorMessage = 'Oh no, this email is already used';
     } else if (error.password) {
       errorMessage = 'Oups, the password is too short...';
+    } else {
+      errorMessage = 'We have a hard time communicating with the server, sorry... Try again in a few minutes please';
     }
 
     var errorElement = <Alert color="danger">{errorMessage}</Alert>

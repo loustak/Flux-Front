@@ -5,6 +5,7 @@ import { withCookies } from 'react-cookie';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Jumbotron, Button, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
+import { ErrorAlert } from './error-alert.js'
 
 export class SignInPath extends React.Component {
 
@@ -34,6 +35,7 @@ class FormValidator extends React.Component {
     this.state = {
       email: '',
       password: '',
+      errorMessage: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -64,20 +66,18 @@ class FormValidator extends React.Component {
       (result) => {
         if (result.errors) {
           // Login failed display the error
-          this.errorHandler(result.errors);
+          const message = 'Ups! Your email or password is incorrect';
+          this.setState({errorMessage: message});
         } else {
           // Logged, save the given jwt token
           this.props.cookies.set('token', result.token, {path: '/'});
           this.props.history.push('/');
         }
+      },
+      (error) => {
+        const message = 'We have a hard time communicating with the server, sorry... Try again in a few minutes please';
+        this.setState({errorMessage: message});
       });
-  }
-
-  errorHandler(error) {
-    var errorMessage = 'Ups! Your email or password is incorrect';
-
-    var errorElement = <Alert color="danger">{errorMessage}</Alert>
-    this.setState({errorElement: errorElement});
   }
 
   // TODO: Display a success message when the user registered successfully
@@ -86,7 +86,7 @@ class FormValidator extends React.Component {
     return(
       <Form onSubmit={this.handleSubmit}>
 
-        {this.state.errorElement}
+        <ErrorAlert message={this.state.errorMessage} />
 
         <FormGroup>
           <Label for="email">Email</Label>
