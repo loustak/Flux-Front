@@ -49,7 +49,7 @@ class FormValidator extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch(this.props.apiPath + '/api/token', {
+    fetch(this.props.apiPath + '/token', {
       method: 'post',
       headers: {
           'Content-Type': 'application/json',

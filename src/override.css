@@ -80,6 +80,7 @@ input[type], textarea {
   z-index: 1000;
   height: 100%;
   width: 75px;
+  padding-top: 56px;
 }
 
 .sidebar-wrapper .nav-item {
@@ -121,7 +122,23 @@ input[type], textarea {
   position: relative;
 }
 
+/* Burger button for side bar */
+.main-content .bar1, .bar2, .bar3 {
+    width: 35px;
+    height: 5px;
+    background-color: #333;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
 /* Message input */
 .message-form {
+  bottom: 0;
+  left: 275px;
+  transition: left 1s ease;
+}
 
+.sidebar-transition-hide .message-form {
+  left: 0px;
+  transition: left 1s ease;
 }

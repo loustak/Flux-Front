@@ -34,7 +34,8 @@ export class HomeAuth extends React.Component {
 
           <div className="main-content">
             <Container fluid >
-              <Button onClick={this.toggle}>Test</Button>
+              <ButtonToggle onClick={this.toggle} />
+              <BottomInputForm className={this.state.className} />
             </Container>
           </div>
 
@@ -44,11 +45,24 @@ export class HomeAuth extends React.Component {
   }
 }
 
+class ButtonToggle extends React.Component {
+
+  render() {
+    return(
+      <div className="button-toggle" onClick={this.props.clickHandle}>
+        <div className="bar1"></div>
+        <div className="bar2"></div>
+        <div className="bar3"></div>
+      </div>
+    )
+  }
+}
+
 class BottomInputForm extends React.Component {
 
   render() {
     return (
-      <Form className="">
+      <Form className={'message-form fixed-bottom ' + this.props.className}>
         <Input className="rounded-0" autoFocus="autofocus" placeholder="Type something..." />
       </Form>
     )
