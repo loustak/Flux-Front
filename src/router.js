@@ -34,6 +34,8 @@ class Auth extends React.Component {
     } catch (error) {
       decoded = undefined;
     }
+    
+    console.log("rerender auth");
 
     // Did we success?
     const logged = decoded !== undefined;
@@ -61,6 +63,8 @@ class RouterLogged extends React.Component {
 
 class RouterVisitor extends React.Component {
   render() {
+    console.log("rerender route visitor");
+    
     return(
       <React.Fragment>
         <NavBarVisitor />
