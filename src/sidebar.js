@@ -39,6 +39,7 @@ class DiscussionsSideBar extends React.Component {
       <div className="discussion-sidebar-wrapper">
         <Nav>
           <NavItem>
+            <NavLink href="/">Community Name</NavLink>
             <NavLink href="/">Discussion 1</NavLink>
             <NavLink href="/">Discussion 1</NavLink>
             <NavLink href="/">Discussion 1</NavLink>

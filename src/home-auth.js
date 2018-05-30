@@ -1,8 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import Transition from 'react-transition-group/Transition';
-import { Form, Container, Input, Row, Col, Button } from 'reactstrap';
+import { Form, Container, Input, Nav, NavItem, Navbar } from 'reactstrap';
+import { NavLink } from './nav-link';
 import SideBar from './sidebar.js';
 
 export class HomeAuth extends React.Component {
@@ -34,7 +34,7 @@ export class HomeAuth extends React.Component {
 
           <div className="main-content">
             <Container fluid >
-              <ButtonToggle onClick={this.toggle} />
+              <NavBarLogged onClick={this.toggle} />
               <BottomInputForm className={this.state.className} />
             </Container>
           </div>
@@ -45,11 +45,26 @@ export class HomeAuth extends React.Component {
   }
 }
 
+class NavBarLogged extends React.Component {
+
+  render() {
+    return (
+      <Navbar color="dark" dark expand="md">
+        <Nav navbar>
+          <NavItem>
+            <ButtonToggle onClick={this.props.onClick} />
+          </NavItem>
+        </Nav>
+      </Navbar>
+    )
+  }
+}
+
 class ButtonToggle extends React.Component {
 
   render() {
     return(
-      <div className="button-toggle" onClick={this.props.clickHandle}>
+      <div className="button-toggle-wrapper pull-left" onClick={this.props.onClick}>
         <div className="bar1"></div>
         <div className="bar2"></div>
         <div className="bar3"></div>

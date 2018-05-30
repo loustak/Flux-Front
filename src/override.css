@@ -80,7 +80,7 @@ input[type], textarea {
   z-index: 1000;
   height: 100%;
   width: 75px;
-  padding-top: 56px;
+  padding-top: 10px;
 }
 
 .sidebar-wrapper .nav-item {
@@ -94,7 +94,7 @@ input[type], textarea {
 
 /* Discussion side bar */
 .discussion-sidebar-wrapper {
-  background: #626262;
+  background: #333;
   left: 75px;
   position: fixed;
   overflow-y: auto;
@@ -102,6 +102,7 @@ input[type], textarea {
   z-index: 1000;
   height: 100%;
   width: 200px;
+  padding-top: 10px;
 }
 
 .sidebar-transition-hide .community-sidebar-wrapper {
@@ -122,13 +123,44 @@ input[type], textarea {
   position: relative;
 }
 
+.main-content .container-fluid {
+  padding: 0;
+}
+
+.main-content .navbar-nav {
+  height: 40px;
+}
+
 /* Burger button for side bar */
-.main-content .bar1, .bar2, .bar3 {
-    width: 35px;
-    height: 5px;
-    background-color: #333;
-    margin: 6px 0;
-    transition: 0.4s;
+.button-toggle-wrapper {
+  display: inline-block;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.button-toggle-wrapper .bar1, .bar2, .bar3 {
+  width: 35px;
+  height: 4px;
+  background-color: #fff;
+  margin: 7px 0;
+  transition: 0.4s;
+}
+
+/* Rotate first bar */
+.sidebar-transition-show .button-toggle-wrapper .bar1 {
+  -webkit-transform: rotate(-45deg) translate(-10px, 7px) ;
+  transform: rotate(-45deg) translate(-10px, 7px) ;
+}
+
+/* Fade out the second bar */
+.sidebar-transition-show .button-toggle-wrapper .bar2 {
+  opacity: 0;
+}
+
+/* Rotate last bar */
+.sidebar-transition-show .button-toggle-wrapper .bar3 {
+  -webkit-transform: rotate(45deg) translate(-7px, -7px) ;
+  transform: rotate(45deg) translate(-7px, -7px) ;
 }
 
 /* Message input */

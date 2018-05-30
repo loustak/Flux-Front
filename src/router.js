@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { CookiesProvider, withCookies } from 'react-cookie';
 import jwt_decode from 'jwt-decode';
-import { NavBarLogged, NavBarVisitor } from './navbar.js';
+import { NavBarVisitor } from './navbar-visitor.js';
 import { Container } from 'reactstrap';
 import { HomeAuth } from './home-auth.js';
 import { HomeVisitor } from './home-visitor.js';
@@ -52,6 +52,7 @@ class RouterLogged extends React.Component {
   render() {
     return(
       <React.Fragment>
+        
         <Route exact={true} path="/" component={HomeAuth} />
       </React.Fragment>
     );
