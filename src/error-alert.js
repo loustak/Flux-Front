@@ -6,7 +6,7 @@ import { Alert } from 'reactstrap';
 export class ErrorAlert extends React.Component {
 
   render() {
-    if (this.props.message != '') {
+    if (this.props.message !== '') {
       return <Alert color="danger">{this.props.message}</Alert>
     }
     return (null);

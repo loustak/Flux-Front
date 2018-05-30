@@ -3,7 +3,8 @@ import { withRouter } from "react-router-dom";
 import {ApiPath} from './index.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Jumbotron, Button, Form, FormGroup, Label, Input, Alert, FormFeedback } from 'reactstrap';
+import { Jumbotron, Button, Form, FormGroup, Label, Input, FormFeedback } from 'reactstrap';
+import { ErrorAlert } from './error-alert.js'
 
 class RegisterPath extends React.Component {
 
@@ -36,6 +37,7 @@ class FormValidator extends React.Component {
       password: '',
       passwordAgain: '',
       passwordDontMatch: false,
+      errorMessage: '',
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -76,36 +78,32 @@ class FormValidator extends React.Component {
     .then(
       (result) => {
         if (result.errors) {
-          this.errorHandler(result.errors);
+          var error = result.errors;
+          var message;
+          if (error.email) {
+            message = 'Oh no, this email is already used';
+          } else if (error.password) {
+            message = 'Oups, the password is too short...';
+          } else {
+            message = 'Unknown error :\'(';
+          }
+          this.setState({errorMessage: message});  
         } else {
           this.props.history.push('/sign-in')
         }
       },
 
       (error) => {
-        this.errorHandler(error);
+        const message = 'We have a hard time communicating with the server, sorry... Try again in a few minutes please';
+        this.setState({errorMessage: message});
       });
-  }
-
-  errorHandler(error) {
-    var errorMessage = 'Something went wrong';
-
-    if (error.email) {
-      errorMessage = 'Oh no, this email is already used';
-    } else if (error.password) {
-      errorMessage = 'Oups, the password is too short...';
-    } else {
-      errorMessage = 'We have a hard time communicating with the server, sorry... Try again in a few minutes please';
-    }
-
-    var errorElement = <Alert color="danger">{errorMessage}</Alert>
-    this.setState({errorElement: errorElement});
   }
 
   render() {
     return(
       <Form onSubmit={this.handleSubmit}>
-        {this.state.errorElement}
+        
+        <ErrorAlert message={this.state.errorMessage} />
 
         <FormGroup>
           <Label for="email">Email</Label>

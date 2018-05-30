@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
-import { Jumbotron, Button, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
+import { Jumbotron, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { ErrorAlert } from './error-alert.js'
 
 export class SignInPath extends React.Component {
