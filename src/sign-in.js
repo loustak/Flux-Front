@@ -1,5 +1,4 @@
 import React from 'react';
-import { ApiPath } from './index.js';
 import { withRouter } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -16,10 +15,7 @@ export class SignInPath extends React.Component {
           <h1 className="display-3">Sign-in</h1>
           <p className="lead">Glad to see you again !</p>
 
-          <ApiPath.Consumer>
-            {apiPath => <WithCookiesFormValidator history={this.props.history} apiPath={apiPath} />}
-          </ApiPath.Consumer>
-
+          <WithCookiesFormValidator history={this.props.history} />
         </div>
       </Jumbotron>
     )
@@ -51,7 +47,7 @@ class FormValidator extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch(this.props.apiPath + '/token', {
+    fetch(process.env.REACT_APP_API_PATH + '/token', {
       method: 'post',
       headers: {
           'Content-Type': 'application/json',

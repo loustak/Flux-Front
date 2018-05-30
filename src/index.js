@@ -11,15 +11,9 @@ class App extends React.Component {
 
   render() {
     return (
-      <ApiPath.Provider value="http://127.0.0.1:4000">
-        <Logged.Provider>
-
-          <ApiPath.Consumer>
-            {apiPath => <FluxRouter apitPath={apiPath} />}
-          </ApiPath.Consumer>
-
-        </Logged.Provider>
-      </ApiPath.Provider>
+      <Logged.Provider>
+        <FluxRouter />}
+      </Logged.Provider>
     );
   }
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { withRouter } from "react-router-dom";
-import {ApiPath} from './index.js'
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Jumbotron, Button, Form, FormGroup, Label, Input, FormFeedback } from 'reactstrap';
@@ -15,9 +14,7 @@ class RegisterPath extends React.Component {
           <h1 className="display-3">Register</h1>
           <p className="lead">So exciting ! Only a few more steps to join us !</p>
 
-          <ApiPath.Consumer>
-            {apiPath => <FormValidator history={this.props.history} apiPath={apiPath} />}
-          </ApiPath.Consumer>
+          <FormValidator history={this.props.history} />
 
         </div>
       </Jumbotron>
@@ -63,7 +60,7 @@ class FormValidator extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch(this.props.apiPath + '/users', {
+    fetch(process.env.REACT_APP_API_PATH + '/users', {
       method: 'post',
       headers: {
           'Content-Type': 'application/json',
