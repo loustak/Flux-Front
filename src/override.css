@@ -199,6 +199,6 @@ input[type], textarea {
   transition: left 1s ease;
 }
 
-.main-content-logged-wrapper {
+.messages-wrapper {
   padding-top: 50px;
 }

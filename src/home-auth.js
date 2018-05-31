@@ -4,18 +4,30 @@ import './override.css';
 import { Socket } from 'phoenix';
 import { Form, Container, Input, Nav, NavItem, Navbar } from 'reactstrap';
 import SideBar from './sidebar.js';
-import jwt_decode from 'jwt-decode';
 
 export class HomeAuth extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { socket: null, collapse: true, className: 'sidebar-transition-show'};
+    this.state = { 
+      socket: null, 
+      channel: null,    // Used by phoenix to manage clients
+      discussion: null, // Data representation 
+      collapse: true, 
+      className: 'sidebar-transition-show'};
     this.toggle = this.toggle.bind(this);
     this.createSocket = this.createSocket.bind(this);
-    this.connectDiscussion = this.connectDiscussion.bind(this);
+    this.joinDiscussion = this.joinDiscussion.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.messageReceive = this.messageReceive.bind(this);
+  }
 
+  componentDidMount() {
     this.createSocket();
+  }
+
+  componentWillUnmount() {
+    this.leaveDiscussion(this.props.channel);
   }
 
   createSocket() {
@@ -26,7 +38,7 @@ export class HomeAuth extends React.Component {
       logger: (kind, message, data) => {console.log(kind + ': ' + message + ' ' + data)}
     });
     socket.connect();
-    this.state = {socket: socket};
+    this.setState({socket: socket});
   }
 
   toggle() {
@@ -41,13 +53,34 @@ export class HomeAuth extends React.Component {
     this.setState({ collapse: collapse, className: className});
   }
 
-  connectDiscussion(discussionId) {
-    console.log("discussion id: " + discussionId);
+  joinDiscussion(discussionId) {
+    this.leaveDiscussion();
+
     if (this.state.socket == null) { return false; }
     const channel = this.state.socket.channel('discussion:' + discussionId);
     channel.join().receive('ok', (response) => {
-      console.log('Connected: ' + response);
+      channel.on('message_created', (message) => {
+        this.messageReceive(message);
+      });
+      this.setState({channel: channel, discussion: response});
     })
+  }
+
+  leaveDiscussion() {
+    if (this.state.channel != null) {
+      this.state.channel.leave();
+    }
+  }
+
+  sendMessage(data) {
+    console.log("Message sent: " + data);
+    const channel = this.state.channel;
+    if (channel == null) { return false; }
+    channel.push('new_message', data);
+  }
+
+  messageReceive(message) {
+    console.log(message);
   }
 
   render() {
@@ -55,12 +88,12 @@ export class HomeAuth extends React.Component {
       <React.Fragment>
         <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
           
-          <SideBar token={this.props.token} className={this.state.className} onDiscussionClick={this.connectDiscussion} />
+          <SideBar token={this.props.token} className={this.state.className} onDiscussionClick={this.joinDiscussion} />
 
           <div className="main-content">
             <Container fluid >
               <NavBarLogged onClick={this.toggle} />
-              <BottomInputForm className={this.state.className} />
+              <BottomInputForm className={this.state.className} onSubmit={this.sendMessage} />
               <Messages />
             </Container>
           </div>
@@ -103,8 +136,8 @@ class Messages extends React.Component {
 
   render() {
     return (
-      <div className="main-content-logged-wrapper">
-        <h1>Hello</h1>
+      <div className="messages-wrapper">
+        
       </div>
     )
   }
@@ -112,10 +145,28 @@ class Messages extends React.Component {
 
 class BottomInputForm extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+    this.changeHandler = this.changeHandler.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
+  }
+
+  changeHandler(event) {
+    this.setState({value: event.target.value});
+  }
+
+  submitHandler(event) {
+    event.preventDefault();
+    this.props.onSubmit(this.state.value);
+  }
+
   render() {
     return (
-      <Form className={'message-form fixed-bottom ' + this.props.className}>
-        <Input className="rounded-0" autoFocus="autofocus" placeholder="Type something..." />
+      <Form className={'message-form fixed-bottom ' + this.props.className}
+        onSubmit={this.submitHandler} >
+        <Input className="rounded-0" autoFocus="autofocus" placeholder="Type something..." 
+          onChange={this.changeHandler} value={this.state.value} />
       </Form>
     )
   }
