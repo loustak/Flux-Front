@@ -24,17 +24,22 @@ export class HomeAuth extends React.Component {
     this.setState({ collapse: collapse, className: className});
   }
 
+  getDiscussionMessages(discussionId) {
+    
+  }
+
   render() {
     return(
       <React.Fragment>
         <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
           
-          <SideBar token={this.props.token} className={this.state.className} />
+          <SideBar token={this.props.token} className={this.state.className} onDiscussionClick={this.getDiscussionMessages} />
 
           <div className="main-content">
             <Container fluid >
               <NavBarLogged onClick={this.toggle} />
               <BottomInputForm className={this.state.className} />
+              <Messages />
             </Container>
           </div>
 
@@ -48,7 +53,7 @@ class NavBarLogged extends React.Component {
 
   render() {
     return (
-      <Navbar color="dark" dark expand="md">
+      <Navbar color="dark" dark expand="md" className="navbar-logged">
         <Nav navbar>
           <NavItem>
             <ButtonToggle onClick={this.props.onClick} />
@@ -67,6 +72,17 @@ class ButtonToggle extends React.Component {
         <div className="bar1"></div>
         <div className="bar2"></div>
         <div className="bar3"></div>
+      </div>
+    )
+  }
+}
+
+class Messages extends React.Component {
+
+  render() {
+    return (
+      <div className="main-content-logged-wrapper">
+        <h1>Hello</h1>
       </div>
     )
   }

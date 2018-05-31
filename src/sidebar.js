@@ -3,11 +3,40 @@ import { Nav, NavItem, NavLink, Modal, ModalHeader, ModalBody, ModalFooter, Butt
 
 export default class SideBar extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {discussions: ''};
+    this.getCommunityDiscussions = this.getCommunityDiscussions.bind(this);
+  }
+
+  getCommunityDiscussions(communityId) {
+    fetch(process.env.REACT_APP_API_PATH + '/communities/' + communityId + '/discussions', {
+      method: 'get',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      }
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          this.setState({discussions: result.discussions});
+        } else {
+          this.setState({finished: true, error: true});
+        }
+      },
+
+      (error) => {
+        this.setState({finished: true, error: true});
+      });
+  }
+
   render() {
     return(
       <div className={'sidebar-wrapper ' + this.props.className}>
-        <CommunitySideBar token={this.props.token} />
-        <DiscussionsSideBar />
+        <CommunitySideBar token={this.props.token} onCommunityClick={this.getCommunityDiscussions}/>
+        <DiscussionsSideBar discussions={this.state.discussions} onClick={this.props.onDiscussionClick} />
       </div>
     )
   }
@@ -47,20 +76,17 @@ class CommunitySideBar extends React.Component {
   
   render() {
     var communities = [];
-    var i = 0;
-    this.state.communities.map((community) => {
+    for (let community of this.state.communities) {
       communities.push(
-        <Community key={i} name={community.name} />
+        <Community key={community.id} id={community.id} name={community.name} onClick={this.props.onCommunityClick} />
       );
-    });
+    }
 
     return(
       <div className="community-sidebar-wrapper">
         <Nav>
-          <NavItem>
-            {communities}
-            <CommunityJoinButton token={this.props.token} onCommunityChange={this.getUserCommunities}/>
-          </NavItem>
+          {communities}
+          <CommunityJoinButton token={this.props.token} onCommunityChange={this.getUserCommunities} />
         </Nav>
       </div>
     )
@@ -71,7 +97,11 @@ class Community extends React.Component {
 
   render() {
     return (
-      <NavLink href="/">{this.props.name}</NavLink>
+      <NavItem className="community-item-wrapper">
+        <Button className="community-item text-uppercase" onClick={() => this.props.onClick(this.props.id)}>
+          {this.props.name.charAt(0)}
+        </Button>
+      </NavItem>
     )
   }
 }
@@ -95,17 +125,21 @@ class CommunityJoinButton extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
-        <Button onClick={this.toggle}>Join</Button>
-        <CommunityJoinForm token={this.props.token} isOpen={this.state.modal} 
-          onCommunityChange={this.props.onCommunityChange}
-          toggle={this.toggle} className={this.props.className} />
-      </React.Fragment>
+      <NavItem className="community-item-wrapper">
+        <React.Fragment>
+          <Button onClick={this.toggle} className="community-item text-uppercase">
+            +
+          </Button>
+          <CommunityJoinPopup token={this.props.token} isOpen={this.state.modal} 
+            onCommunityChange={this.props.onCommunityChange}
+            toggle={this.toggle} className={this.props.className} />
+        </React.Fragment>
+      </NavItem>
     )
   }
 }
 
-class CommunityJoinForm extends React.Component {
+class CommunityJoinPopup extends React.Component {
 
   constructor(props) {
     super(props);
@@ -163,17 +197,30 @@ class CommunityJoinForm extends React.Component {
 class DiscussionsSideBar extends React.Component {
 
   render() {
+    var discussions = [];
+    for (let discussion of this.props.discussions) {
+      discussions.push(
+        <Discussion key={discussion.id} id={discussion.id} name={'#' + discussion.name} onClick={this.props.onClick} />
+      );
+    }
+
     return(
       <div className="discussion-sidebar-wrapper">
         <Nav>
-          <NavItem>
-            <NavLink href="/">Community Name</NavLink>
-            <NavLink href="/">Discussion 1</NavLink>
-            <NavLink href="/">Discussion 1</NavLink>
-            <NavLink href="/">Discussion 1</NavLink>
-          </NavItem>
+          {discussions}
         </Nav>
       </div>
+    )
+  }
+}
+
+class Discussion extends React.Component {
+
+  render() {
+    return (
+      <NavItem className="discussion-item-wrapper">
+        <a className="discussion-item text-lowercase" onClick={() => this.props.onClick(this.props.id)}>{this.props.name}</a>
+      </NavItem>
     )
   }
 }

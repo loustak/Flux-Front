@@ -27,7 +27,7 @@ export class NavBarVisitor extends React.Component {
         <NavLink className="text-uppercase font-weight-bold navbar-brand" to="/">flux</NavLink>
         <NavbarToggler onClick={this.toggle} />
         <Collapse isOpen={this.state.isOpen} navbar>
-          <Nav className="ml-auto" navbar>
+          <Nav navbar>
             <NavItem>
               <NavLink to="/sign-in">Sign-in</NavLink>
             </NavItem>
