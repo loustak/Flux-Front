@@ -1,15 +1,32 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
+import { Socket } from 'phoenix';
 import { Form, Container, Input, Nav, NavItem, Navbar } from 'reactstrap';
 import SideBar from './sidebar.js';
+import jwt_decode from 'jwt-decode';
 
 export class HomeAuth extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { collapse: true, className: 'sidebar-transition-show'};
+    this.state = { socket: null, collapse: true, className: 'sidebar-transition-show'};
     this.toggle = this.toggle.bind(this);
+    this.createSocket = this.createSocket.bind(this);
+    this.connectDiscussion = this.connectDiscussion.bind(this);
+
+    this.createSocket();
+  }
+
+  createSocket() {
+    const token = this.props.token;
+
+    const socket = new Socket(process.env.REACT_APP_SOCKET_PATH, {
+      params: {token: token},
+      logger: (kind, message, data) => {console.log(kind + ': ' + message + ' ' + data)}
+    });
+    socket.connect();
+    this.state = {socket: socket};
   }
 
   toggle() {
@@ -24,8 +41,13 @@ export class HomeAuth extends React.Component {
     this.setState({ collapse: collapse, className: className});
   }
 
-  getDiscussionMessages(discussionId) {
-    
+  connectDiscussion(discussionId) {
+    console.log("discussion id: " + discussionId);
+    if (this.state.socket == null) { return false; }
+    const channel = this.state.socket.channel('discussion:' + discussionId);
+    channel.join().receive('ok', (response) => {
+      console.log('Connected: ' + response);
+    })
   }
 
   render() {
@@ -33,7 +55,7 @@ export class HomeAuth extends React.Component {
       <React.Fragment>
         <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
           
-          <SideBar token={this.props.token} className={this.state.className} onDiscussionClick={this.getDiscussionMessages} />
+          <SideBar token={this.props.token} className={this.state.className} onDiscussionClick={this.connectDiscussion} />
 
           <div className="main-content">
             <Container fluid >
