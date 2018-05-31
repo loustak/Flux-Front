@@ -8,7 +8,7 @@ export default class SideBar extends React.Component {
   render() {
     return(
       <div className={'sidebar-wrapper ' + this.props.className}>
-        <CommunitySideBar />
+        <CommunitySideBar token={this.props.token} />
         <DiscussionsSideBar />
       </div>
     )
@@ -16,6 +16,36 @@ export default class SideBar extends React.Component {
 }
 
 class CommunitySideBar extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    // Fetch all the comunity of the users
+    this.getUserCommunities();
+  }
+
+  getUserCommunities() {
+    fetch(process.env.REACT_APP_API_PATH + '/users/communities', {
+      method: 'get',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      }
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          console.log(result);
+        } else {
+          this.setState({finished: true, error: true});
+        }
+      },
+
+      (error) => {
+        this.setState({finished: true, error: true});
+      });
+  }
   
   render() {
     return(

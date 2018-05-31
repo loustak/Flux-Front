@@ -72,7 +72,7 @@ input[type], textarea {
 
 /* Community side bar */
 .community-sidebar-wrapper {
-  background: #121212;
+  background: #212121;
   left: 0;
   position: fixed;
   overflow-y: auto;
@@ -94,7 +94,7 @@ input[type], textarea {
 
 /* Discussion side bar */
 .discussion-sidebar-wrapper {
-  background: #333;
+  background: #121212;
   left: 75px;
   position: fixed;
   overflow-y: auto;
@@ -174,3 +174,4 @@ input[type], textarea {
   left: 0px;
   transition: left 1s ease;
 }
+

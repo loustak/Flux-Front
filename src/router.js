@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { CookiesProvider, withCookies } from 'react-cookie';
-import jwt_decode from 'jwt-decode';
+import { CookiesProvider } from 'react-cookie';
+import { WithCookiesAuth } from './auth.js';
 import { NavBarVisitor } from './navbar-visitor.js';
 import { Container } from 'reactstrap';
 import { HomeAuth } from './home-auth.js';
@@ -24,42 +24,19 @@ export class FluxRouter extends React.Component {
   }
 }
 
-class Auth extends React.Component {
-
-  render() {
-    // Try to decode the token
-    try {
-      const token = this.props.cookies.get('token');
-      var decoded = jwt_decode(token);
-    } catch (error) {
-      decoded = undefined;
-    }
-
-    // Did we success?
-    const logged = decoded !== undefined;
-
-    if (logged) {
-      return <RouterLogged />
-    }
-
-    return <RouterVisitor />
-  }
-}
-
-const WithCookiesAuth = withCookies(Auth);
-
-class RouterLogged extends React.Component {
+export class RouterLogged extends React.Component {
   render() {
     return(
-      <React.Fragment>
-        
-        <Route exact={true} path="/" component={HomeAuth} />
+      <React.Fragment>  
+        <Route exact={true} path="/" component={() =>
+          <HomeAuth token={this.props.token} />
+        } />
       </React.Fragment>
     );
   }
 }
 
-class RouterVisitor extends React.Component {
+export class RouterVisitor extends React.Component {
   render() {    
     return(
       <React.Fragment>

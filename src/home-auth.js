@@ -2,7 +2,6 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Form, Container, Input, Nav, NavItem, Navbar } from 'reactstrap';
-import { NavLink } from './nav-link';
 import SideBar from './sidebar.js';
 
 export class HomeAuth extends React.Component {
@@ -30,7 +29,7 @@ export class HomeAuth extends React.Component {
       <React.Fragment>
         <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
           
-          <SideBar className={this.state.className} />
+          <SideBar token={this.props.token} className={this.state.className} />
 
           <div className="main-content">
             <Container fluid >
