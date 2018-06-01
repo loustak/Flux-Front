@@ -192,6 +192,7 @@ input[type], textarea {
   bottom: 0;
   left: 275px;
   transition: left 1s ease;
+  height: 38px;
 }
 
 .sidebar-transition-hide .message-form {
@@ -201,4 +202,5 @@ input[type], textarea {
 
 .messages-wrapper {
   padding-top: 50px;
+  padding-bottom: 38px;
 }

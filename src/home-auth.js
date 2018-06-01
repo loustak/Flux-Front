@@ -12,7 +12,8 @@ export class HomeAuth extends React.Component {
     this.state = { 
       socket: null, 
       channel: null,    // Used by phoenix to manage clients
-      discussion: null, // Data representation 
+      info: null,       // Data representation 
+      messages: [],
       collapse: true, 
       className: 'sidebar-transition-show'};
     this.toggle = this.toggle.bind(this);
@@ -53,16 +54,41 @@ export class HomeAuth extends React.Component {
     this.setState({ collapse: collapse, className: className});
   }
 
+  loadOlderMessages(lastMessage) {
+    const discussionId = this.state.discussion.id;
+    const lastMessageTime = lastMessage.time;
+    fetch(process.env.REACT_APP_API_PATH + '/discussions/' + discussionId + '/' + lastMessageTime, {
+      method: 'get',
+      headers: {
+          'Content-Type': 'application/json',
+      }
+    })
+    .then(res => res.json())
+    .then((result) => {
+      console.log(result)
+    });
+  }
+
   joinDiscussion(discussionId) {
     this.leaveDiscussion();
 
     if (this.state.socket == null) { return false; }
     const channel = this.state.socket.channel('discussion:' + discussionId);
     channel.join().receive('ok', (response) => {
+
+      var messages = [];
+      for (let message of response.messages.reverse()) {
+        messages.push(<Message key={message.id} text={message.text} />);
+      }
+
       channel.on('message_created', (message) => {
         this.messageReceive(message);
       });
-      this.setState({channel: channel, discussion: response});
+
+      this.setState({channel: channel, info: response, messages: messages}, () => {
+        // Scroll to the bottom of the view
+        this.refs.viewMessagesBottom.scrollIntoView();
+      });
     })
   }
 
@@ -80,7 +106,14 @@ export class HomeAuth extends React.Component {
   }
 
   messageReceive(message) {
-    console.log(message);
+    this.setState((previousState) => ({
+      messages: [previousState.messages, <Message key={message.id} text={message.text} />]
+    }), () => {
+      // If the message was sent by this user scoll to the bottom
+      if (message.user_id === this.state.info.user.id) {
+        this.refs.viewMessagesBottom.scrollIntoView({block: 'end', behavior: 'smooth'});
+      }
+    });
   }
 
   render() {
@@ -94,7 +127,8 @@ export class HomeAuth extends React.Component {
             <Container fluid >
               <NavBarLogged onClick={this.toggle} />
               <BottomInputForm className={this.state.className} onSubmit={this.sendMessage} />
-              <Messages />
+              <MessagesContainer messages={this.state.messages} />
+              <div ref="viewMessagesBottom"></div>
             </Container>
           </div>
 
@@ -132,12 +166,21 @@ class ButtonToggle extends React.Component {
   }
 }
 
-class Messages extends React.Component {
+class Message extends React.Component {
+
+  render() {
+    return(
+      <p>{this.props.text}</p>
+    )
+  }
+}
+
+class MessagesContainer extends React.Component {
 
   render() {
     return (
       <div className="messages-wrapper">
-        
+        {this.props.messages}
       </div>
     )
   }
@@ -159,6 +202,7 @@ class BottomInputForm extends React.Component {
   submitHandler(event) {
     event.preventDefault();
     this.props.onSubmit(this.state.value);
+    this.setState({value: ''});
   }
 
   render() {

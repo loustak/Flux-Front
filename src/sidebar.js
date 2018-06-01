@@ -1,5 +1,5 @@
 import React from 'react';
-import { Nav, NavItem, NavLink, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Form } from 'reactstrap';
+import { Nav, NavItem, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Form } from 'reactstrap';
 
 export default class SideBar extends React.Component {
 
