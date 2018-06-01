@@ -2,10 +2,11 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Socket } from 'phoenix';
+import { withCookies } from 'react-cookie';
 import { Form, Container, Input, Nav, NavItem, Navbar } from 'reactstrap';
 import SideBar from './sidebar.js';
 
-export class HomeAuth extends React.Component {
+class HomeAuth extends React.Component {
 
   constructor(props) {
     super(props);
@@ -39,7 +40,12 @@ export class HomeAuth extends React.Component {
       logger: (kind, message, data) => {console.log(kind + ': ' + message + ' ' + data)}
     });
     socket.connect();
-    this.setState({socket: socket});
+    this.setState({socket: socket}, () => {
+      const discussionId = this.props.cookies.get('discussionId');
+      if (discussionId !== undefined) {
+        this.joinDiscussion(discussionId);
+      }
+    });
   }
 
   toggle() {
@@ -75,7 +81,6 @@ export class HomeAuth extends React.Component {
     if (this.state.socket == null) { return false; }
     const channel = this.state.socket.channel('discussion:' + discussionId);
     channel.join().receive('ok', (response) => {
-
       var messages = [];
       for (let message of response.messages.reverse()) {
         messages.push(<Message key={message.id} data={message} />);
@@ -89,6 +94,8 @@ export class HomeAuth extends React.Component {
         // Scroll to the bottom of the view
         this.refs.viewMessagesBottom.scrollIntoView();
       });
+
+      this.props.cookies.set('discussionId', discussionId, {path: '/'});
     })
   }
 
@@ -121,7 +128,8 @@ export class HomeAuth extends React.Component {
       <React.Fragment>
         <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
           
-          <SideBar token={this.props.token} className={this.state.className} onDiscussionClick={this.joinDiscussion} />
+          <SideBar token={this.props.token} cookies={this.props.cookies}
+            className={this.state.className} onDiscussionClick={this.joinDiscussion} />
 
           <div className="main-content">
             <Container fluid >
@@ -137,6 +145,8 @@ export class HomeAuth extends React.Component {
     )
   }
 }
+
+export const WithCookiesHomeAuth = withCookies(HomeAuth);
 
 class NavBarLogged extends React.Component {
 
@@ -170,9 +180,13 @@ class Message extends React.Component {
 
   render() {
     return(
-      <div>
-        <h6>{this.props.data.user.username}</h6>
-        <p>{this.props.data.text}</p>
+      <div className="message-item-wrapper">
+        <p className="message-item-username font-weight-bold">
+          {this.props.data.user.username}
+        </p>
+        <p className="message-item-content font-weight-normal">
+          {this.props.data.text}
+        </p>
       </div>
     )
   }

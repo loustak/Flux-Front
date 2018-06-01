@@ -4,7 +4,7 @@ import { CookiesProvider } from 'react-cookie';
 import { WithCookiesAuth } from './auth.js';
 import { NavBarVisitor } from './navbar-visitor.js';
 import { Container } from 'reactstrap';
-import { HomeAuth } from './home-auth.js';
+import { WithCookiesHomeAuth } from './home-auth.js';
 import { HomeVisitor } from './home-visitor.js';
 import { Register } from './register.js';
 import { SignIn } from './sign-in.js';
@@ -29,7 +29,9 @@ export class RouterLogged extends React.Component {
     return(
       <React.Fragment>  
         <Route exact={true} path="/" component={() =>
-          <HomeAuth token={this.props.token} />
+          <CookiesProvider>
+            <WithCookiesHomeAuth cookies={this.props.cookies} token={this.props.token} />
+          </CookiesProvider>
         } />
       </React.Fragment>
     );

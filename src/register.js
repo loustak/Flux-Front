@@ -15,7 +15,6 @@ class RegisterPath extends React.Component {
           <p className="lead">So exciting ! Only a few more steps to join us !</p>
 
           <FormValidator history={this.props.history} />
-
         </div>
       </Jumbotron>
     )

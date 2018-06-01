@@ -202,5 +202,21 @@ input[type], textarea {
 
 .messages-wrapper {
   padding-top: 60px;
-  padding-bottom: 38px;
+  padding-bottom: 45px;
+}
+
+.message-item-wrapper {
+  padding: 5px;
+}
+
+.message-item-username {
+  margin-bottom: 3px;
+  color: #192a56;
+}
+
+.message-item-content {
+  display: inline;
+  color: #000;
+  padding: 6px;
+  padding-left: 0px;
 }

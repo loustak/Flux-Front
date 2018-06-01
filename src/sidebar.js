@@ -7,9 +7,15 @@ export default class SideBar extends React.Component {
     super(props);
     this.state = {discussions: ''};
     this.getCommunityDiscussions = this.getCommunityDiscussions.bind(this);
+
+    const communityId = this.props.cookies.get('communityId');
+    if (communityId !== undefined) {
+      this.getCommunityDiscussions(communityId);      
+    }
   }
 
   getCommunityDiscussions(communityId) {
+    this.props.cookies.set('communityId', communityId, {path: '/'});
     fetch(process.env.REACT_APP_API_PATH + '/communities/' + communityId + '/discussions', {
       method: 'get',
       headers: {
