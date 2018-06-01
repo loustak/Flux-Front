@@ -149,13 +149,19 @@ class CommunityJoinPopup extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {communityId: ''};
-    this.changeHandler = this.changeHandler.bind(this);
+    this.state = {joinName: '', createName: ''};
+    this.joinChangeHandler = this.joinChangeHandler.bind(this);
     this.joinHandler = this.joinHandler.bind(this);
+    this.createChangeHandler = this.createChangeHandler.bind(this);
+    this.createHandler = this.createHandler.bind(this);
   }
 
-  changeHandler(event) {
-    this.setState({communityId: event.target.value});
+  joinChangeHandler(event) {
+    this.setState({joinName: event.target.value});
+  }
+
+  createChangeHandler(event) {
+    this.setState({createName: event.target.value});
   }
 
   joinHandler() {
@@ -183,17 +189,53 @@ class CommunityJoinPopup extends React.Component {
       });
   }
 
+  createHandler() {
+    fetch(process.env.REACT_APP_API_PATH + '/communities', {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      },
+      body: JSON.stringify({
+        name: this.state.createName
+      })
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          console.log("Community joined");
+          this.props.onCommunityChange();
+          this.props.toggle();
+        } else {
+          console.log("Error");
+        }
+      },
+
+      (error) => {
+        console.log("Error");
+      });
+  }
+
   render() {
     return(
       <Modal centered isOpen={this.props.isOpen} toggle={this.props.toggle} className={this.props.className}>
         <ModalHeader toggle={this.props.toggle}>Join a community</ModalHeader>
         <ModalBody>
-            <Form>
-              <Input placeholder="Community name" onChange={this.changeHandler} />
+            <Form className="form-join-community">
+              <Input placeholder="Community name" onChange={this.joinChangeHandler} />
+              <Button color="secondary" onClick={this.joinHandler}>Join</Button>
+            </Form>
+        </ModalBody>
+        <ModalBody>
+            <p>Or create one</p>
+            <Form className="form-create-community">
+              <Input placeholder="Community name" onChange={this.createChangeHandler} />
+              <Button color="secondary" onClick={this.createHandler}>Create</Button>
             </Form>
         </ModalBody>
         <ModalFooter>
-            <Button color="secondary" onClick={this.joinHandler}>Join</Button>
+            
         </ModalFooter>
       </Modal>
     )

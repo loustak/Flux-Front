@@ -220,3 +220,35 @@ input[type], textarea {
   padding: 6px;
   padding-left: 0px;
 }
+
+.form-join-community input {
+  width: 85%;
+  display: inline;
+}
+
+@media screen and (max-width: 500px) {
+  .form-join-community input {
+    width: 75%;
+  }  
+}
+
+.form-join-community button {
+  margin: 5px;
+  margin-top: 1px;
+}
+
+.form-create-community input {
+  width: 80%;
+  display: inline;
+}
+
+@media screen and (max-width: 500px) {
+  .form-create-community input {
+    width: 75%;
+  }  
+}
+
+.form-create-community button {
+  margin: 5px;
+  margin-top: 1px;
+}

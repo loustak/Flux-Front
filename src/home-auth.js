@@ -14,6 +14,7 @@ class HomeAuth extends React.Component {
       socket: null, 
       channel: null,    // Used by phoenix to manage clients
       info: null,       // Data representation 
+      currentDiscussionId: null,
       messages: [],
       collapse: true, 
       className: 'sidebar-transition-show'};
@@ -76,6 +77,11 @@ class HomeAuth extends React.Component {
   }
 
   joinDiscussion(discussionId) {
+    if (this.state.currentDiscussionId === discussionId) {
+      // Same channel, don't fetch the server again
+      return;
+    }
+
     this.leaveDiscussion();
 
     if (this.state.socket == null) { return false; }
@@ -90,7 +96,7 @@ class HomeAuth extends React.Component {
         this.messageReceive(message);
       });
 
-      this.setState({channel: channel, info: response, messages: messages}, () => {
+      this.setState({channel: channel, info: response, currentDiscussionId: discussionId, messages: messages}, () => {
         // Scroll to the bottom of the view
         this.refs.viewMessagesBottom.scrollIntoView();
       });
