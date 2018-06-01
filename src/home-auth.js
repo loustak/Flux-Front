@@ -78,7 +78,7 @@ export class HomeAuth extends React.Component {
 
       var messages = [];
       for (let message of response.messages.reverse()) {
-        messages.push(<Message key={message.id} text={message.text} />);
+        messages.push(<Message key={message.id} data={message} />);
       }
 
       channel.on('message_created', (message) => {
@@ -107,10 +107,10 @@ export class HomeAuth extends React.Component {
 
   messageReceive(message) {
     this.setState((previousState) => ({
-      messages: [previousState.messages, <Message key={message.id} text={message.text} />]
+      messages: [previousState.messages, <Message key={message.id} data={message} />]
     }), () => {
       // If the message was sent by this user scoll to the bottom
-      if (message.user_id === this.state.info.user.id) {
+      if (message.user.id === this.state.info.user.id) {
         this.refs.viewMessagesBottom.scrollIntoView({block: 'end', behavior: 'smooth'});
       }
     });
@@ -170,7 +170,10 @@ class Message extends React.Component {
 
   render() {
     return(
-      <p>{this.props.text}</p>
+      <div>
+        <h6>{this.props.data.user.username}</h6>
+        <p>{this.props.data.text}</p>
+      </div>
     )
   }
 }
