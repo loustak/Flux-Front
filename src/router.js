@@ -26,6 +26,7 @@ export class FluxRouter extends React.Component {
 
 export class RouterLogged extends React.Component {
   render() {
+    // TODO: Handle 404 pages
     return(
       <React.Fragment>  
         <Route exact={true} path="/" component={() =>

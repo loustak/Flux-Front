@@ -29,6 +29,17 @@ html, body, #root {
   background-color: transparent;
 }
 
+@media screen and (max-width: 500px) {
+  .container {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .flux-container {
+    width: 90%;
+  }
+}
+
 .alert-danger {
   color: #ecf0f1;
   background-color: #c0392b;
@@ -112,6 +123,17 @@ input[type], textarea {
 .discussion-item-wrapper {
   padding-left: 5px;
   padding-top: 10px;
+}
+
+.discussion-item-wrapper .edit {
+  visibility: hidden;
+  color: #fff !important;
+  cursor: pointer;
+  float: right;
+}
+
+.discussion-item-wrapper:hover .edit {
+  visibility: visible;
 }
 
 .discussion-item {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Nav, NavItem, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Form } from 'reactstrap';
+import { Nav, NavItem, Modal, ModalHeader, ModalBody, Button, Input, Form } from 'reactstrap';
 
 export default class SideBar extends React.Component {
 
@@ -54,7 +54,8 @@ export default class SideBar extends React.Component {
     return(
       <div className={'sidebar-wrapper ' + this.props.className}>
         <CommunitySideBar token={this.props.token} onCommunityClick={this.getCommunityDiscussions}/>
-        <DiscussionsSideBar discussions={this.state.discussions} onClick={this.props.onDiscussionClick} />
+        <DiscussionsSideBar token={this.props.token} discussions={this.state.discussions} 
+          discussionRefresh={this.getCommunityDiscussions} onClick={this.props.onDiscussionClick} />
       </div>
     )
   }
@@ -307,9 +308,6 @@ class CommunityJoinPopup extends React.Component {
               </div>
             </Form>
         </ModalBody>
-        <ModalFooter>
-            
-        </ModalFooter>
       </Modal>
     )
   }
@@ -317,11 +315,71 @@ class CommunityJoinPopup extends React.Component {
 
 class DiscussionsSideBar extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {modal: false, discussion: {id: '', name: ''}};
+    this.toggle = this.toggle.bind(this);
+    this.editHandler = this.editHandler.bind(this);
+    this.editOnChange = this.editOnChange.bind(this);
+    this.saveEdit = this.saveEdit.bind(this);
+  }
+
+  toggle() {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
+  editHandler(event, discusisonId, discussionName) {
+    event.preventDefault();
+    this.setState({discussion: {
+      id: discusisonId,
+      name: discussionName,
+    }}, () => { 
+      this.toggle();
+    });
+  }
+
+  editOnChange(event) {
+    this.setState({discussion: {id: this.state.discussion.id, name: event.target.value}});
+  }
+
+  saveEdit(event) {
+    event.preventDefault();
+    console.log(this.state.discussion.id);
+    fetch(process.env.REACT_APP_API_PATH + '/discussions/' + this.state.discussion.id, {
+      method: 'put',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      },
+      body: JSON.stringify({
+        name: this.state.discussion.name,
+      })
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          this.props.discussionRefresh(result.discussion.community_id);
+          this.toggle();
+        } else {
+          // TODO: Handle errors
+          console.error(result.errors);
+        }
+      },
+      (error) => {
+        // TODO: Handle errors
+        console.error(error);
+      });
+  }
+
   render() {
     var discussions = [];
     for (let discussion of this.props.discussions) {
       discussions.push(
-        <Discussion key={discussion.id} id={discussion.id} name={'#' + discussion.name} onClick={this.props.onClick} />
+        <Discussion key={discussion.id} id={discussion.id} name={discussion.name} 
+          onClick={this.props.onClick} onEdit={this.editHandler} />
       );
     }
 
@@ -330,6 +388,18 @@ class DiscussionsSideBar extends React.Component {
         <Nav>
           {discussions}
         </Nav>
+
+        <Modal centered isOpen={this.state.modal} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle}>Edit a discussion</ModalHeader>
+          <ModalBody>
+              <Form autoComplete="off" className="form-join-community">
+                <div className="text-center autocomplete">
+                  <Input placeholder="Discussion name" value={this.state.discussion.name} onChange={this.editOnChange} />
+                  <Button color="secondary" onClick={this.saveEdit} >Save</Button>
+                </div>
+              </Form>
+          </ModalBody>
+        </Modal>
       </div>
     )
   }
@@ -340,7 +410,10 @@ class Discussion extends React.Component {
   render() {
     return (
       <NavItem className="discussion-item-wrapper">
-        <a className="discussion-item text-lowercase" onClick={() => this.props.onClick(this.props.id)}>{this.props.name}</a>
+        <div>
+          <a className="discussion-item text-lowercase" onClick={() => this.props.onClick(this.props.id)}>{this.props.name}</a>
+          <a className="edit" href="/" onClick={(event) => {this.props.onEdit(event, this.props.id, this.props.name)}}>edit</a>
+        </div>
       </NavItem>
     )
   }
