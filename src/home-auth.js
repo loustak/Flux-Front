@@ -43,8 +43,10 @@ class HomeAuth extends React.Component {
 
   hideSideBar(event) {
     console.log(event.target);
-    if (this.state.collapse && !this.sidebarElt.contains(event.target)) {
-      this.toggle();
+    if (window.innerWidth < 640) {
+      if (this.state.collapse && !this.sidebarElt.contains(event.target)) {
+        this.toggle();
+      }
     }
   }
 
