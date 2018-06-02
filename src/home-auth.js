@@ -3,7 +3,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './override.css';
 import { Socket } from 'phoenix';
 import { withCookies } from 'react-cookie';
-import { Form, Container, Input, Nav, NavItem, Navbar } from 'reactstrap';
+import { withRouter } from 'react-router-dom';
+import { Form, Container, Input, Nav, NavItem, Navbar, NavLink } from 'reactstrap';
 import SideBar from './sidebar.js';
 
 class HomeAuth extends React.Component {
@@ -138,7 +139,7 @@ class HomeAuth extends React.Component {
 
           <div className="main-content">
             <Container fluid >
-              <NavBarLogged onClick={this.toggle} />
+              <WithCookiesAndRouterNavBarLogged cookies={this.props.cookies} history={this.props.history} onClick={this.toggle} />
               <BottomInputForm className={this.state.className} onSubmit={this.sendMessage} />
               <MessagesContainer messages={this.state.messages} />
               <div ref="viewMessagesBottom"></div>
@@ -155,6 +156,17 @@ export const WithCookiesHomeAuth = withCookies(HomeAuth);
 
 class NavBarLogged extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.clickHandle = this.clickHandle.bind(this);
+  }
+
+  clickHandle(event) {
+    event.preventDefault();
+    this.props.cookies.set('token', '', {path: '/'});
+    this.props.history.push('/');
+  }
+
   render() {
     return (
       <Navbar color="dark" dark expand="md" className="navbar-logged">
@@ -163,10 +175,18 @@ class NavBarLogged extends React.Component {
             <ButtonToggle onClick={this.props.onClick} />
           </NavItem>
         </Nav>
+        <Nav navbar className="ml-auto">
+          <NavItem>
+            <NavLink href="/" onClick={this.clickHandle}>Sign-out</NavLink>
+          </NavItem>
+        </Nav>
       </Navbar>
     )
   }
 }
+
+const WithRouterNavBarLogged = withRouter(NavBarLogged);
+const WithCookiesAndRouterNavBarLogged = withCookies(WithRouterNavBarLogged);
 
 class ButtonToggle extends React.Component {
 
