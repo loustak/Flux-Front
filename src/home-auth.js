@@ -5,6 +5,7 @@ import { Socket } from 'phoenix';
 import { withCookies } from 'react-cookie';
 import { withRouter } from 'react-router-dom';
 import { Form, Container, Input, Nav, NavItem, Navbar, NavLink } from 'reactstrap';
+import Waypoint from 'react-waypoint';
 import SideBar from './sidebar.js';
 
 class HomeAuth extends React.Component {
@@ -18,12 +19,16 @@ class HomeAuth extends React.Component {
       currentDiscussionId: null,
       messages: [],
       collapse: true, 
-      className: 'sidebar-transition-show'};
+      className: 'sidebar-transition-show',
+      onBottom: false,
+    };
     this.toggle = this.toggle.bind(this);
     this.createSocket = this.createSocket.bind(this);
     this.joinDiscussion = this.joinDiscussion.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.messageReceive = this.messageReceive.bind(this);
+    this.enterViewBottom = this.enterViewBottom.bind(this);
+    this.leaveViewBottom = this.leaveViewBottom.bind(this);
   }
 
   componentDidMount() {
@@ -98,7 +103,7 @@ class HomeAuth extends React.Component {
         this.messageReceive(message);
       });
 
-      this.setState({channel: channel, info: response, currentDiscussionId: discussionId, messages: messages}, () => {
+      this.setState({channel: channel, info: response, currentDiscussionId: discussionId, messages: messages, onBottom: true}, () => {
         // Scroll to the bottom of the view
         this.refs.viewMessagesBottom.scrollIntoView();
       });
@@ -113,6 +118,16 @@ class HomeAuth extends React.Component {
     }
   }
 
+  enterViewBottom() {
+    console.log("At the bottom")
+    this.setState({onBottom: true});
+  }
+
+  leaveViewBottom() {
+    console.log("Not at the bottom")
+    this.setState({onBottom: false});
+  }
+
   sendMessage(data) {
     const channel = this.state.channel;
     if (channel == null) { return false; }
@@ -124,7 +139,7 @@ class HomeAuth extends React.Component {
       messages: [previousState.messages, <Message key={message.id} data={message} />]
     }), () => {
       // If the message was sent by this user scoll to the bottom
-      if (message.user.id === this.state.info.user.id) {
+      if (message.user.id === this.state.info.user.id || this.state.onBottom) {
         this.refs.viewMessagesBottom.scrollIntoView({block: 'end', behavior: 'smooth'});
       }
     });
@@ -143,6 +158,7 @@ class HomeAuth extends React.Component {
               <WithCookiesAndRouterNavBarLogged cookies={this.props.cookies} history={this.props.history} onClick={this.toggle} />
               <BottomInputForm className={this.state.className} onSubmit={this.sendMessage} />
               <MessagesContainer messages={this.state.messages} />
+              <Waypoint onEnter={this.enterViewBottom} onLeave={this.leaveViewBottom} />
               <div ref="viewMessagesBottom"></div>
             </Container>
           </div>
