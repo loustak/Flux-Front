@@ -22,6 +22,7 @@ class HomeAuth extends React.Component {
       className: 'sidebar-transition-show',
       onBottom: false,
     };
+    this.hideSideBar = this.hideSideBar.bind(this);
     this.toggle = this.toggle.bind(this);
     this.createSocket = this.createSocket.bind(this);
     this.joinDiscussion = this.joinDiscussion.bind(this);
@@ -32,11 +33,19 @@ class HomeAuth extends React.Component {
   }
 
   componentDidMount() {
+    this.sidebarElt = document.getElementById('home-auth-sidebar');
     this.createSocket();
   }
 
   componentWillUnmount() {
     this.leaveDiscussion(this.props.channel);
+  }
+
+  hideSideBar(event) {
+    console.log(event.target);
+    if (this.state.collapse && !this.sidebarElt.contains(event.target)) {
+      this.toggle();
+    }
   }
 
   createSocket() {
@@ -119,12 +128,10 @@ class HomeAuth extends React.Component {
   }
 
   enterViewBottom() {
-    console.log("At the bottom")
     this.setState({onBottom: true});
   }
 
   leaveViewBottom() {
-    console.log("Not at the bottom")
     this.setState({onBottom: false});
   }
 
@@ -148,13 +155,13 @@ class HomeAuth extends React.Component {
   render() {
     return(
       <React.Fragment>
-        <Container fluid className={'home-auth-container h-100 ' + this.state.className}>
+        <Container fluid className={'home-auth-container h-100 ' + this.state.className} >
           
-          <SideBar token={this.props.token} cookies={this.props.cookies}
+          <SideBar token={this.props.token} cookies={this.props.cookies} id="home-auth-sidebar"
             className={this.state.className} onDiscussionClick={this.joinDiscussion} />
 
-          <div className="main-content">
-            <Container fluid >
+          <div className="main-content" onClick={this.hideSideBar}>
+            <Container fluid>
               <WithCookiesAndRouterNavBarLogged cookies={this.props.cookies} history={this.props.history} onClick={this.toggle} />
               <BottomInputForm className={this.state.className} onSubmit={this.sendMessage} />
               <MessagesContainer messages={this.state.messages} />

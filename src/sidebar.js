@@ -86,7 +86,7 @@ export default class SideBar extends React.Component {
 
   render() {
     return(
-      <div className={'sidebar-wrapper ' + this.props.className}>
+      <div id={this.props.id} className={'sidebar-wrapper ' + this.props.className}>
         <CommunitySideBar token={this.props.token} onCommunityClick={this.getCommunityDiscussions}/>
         <DiscussionsSideBar token={this.props.token} discussions={this.state.discussions} 
         discussionRefresh={this.getCommunityDiscussions} create={this.createCommunity} onClick={this.props.onDiscussionClick} />
@@ -147,21 +147,6 @@ class CommunitySideBar extends React.Component {
 }
 
 class Community extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.toggle = this.toggle.bind(this);
-    this.state = {
-      tooltipOpen: false
-    };
-  }
-
-  toggle() {
-    this.setState({
-      tooltipOpen: !this.state.tooltipOpen
-    });
-  }
 
   render() {
     return (

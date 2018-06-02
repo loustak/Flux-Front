@@ -165,6 +165,21 @@ input[type], textarea {
 
 .main-content {
   position: relative;
+  overflow-x: hidden;
+}
+
+@media screen and (max-width: 640px) {
+  .main-content {
+    position: absolute;
+    left: 0px;
+    width: 100%;
+  }
+
+  .message-form {
+    z-index: 500;
+    position: fixed;
+    left: 0px !important;
+  }
 }
 
 .main-content .container-fluid {
@@ -210,6 +225,8 @@ input[type], textarea {
 .navbar-logged {
   position: fixed;
   width: 100%;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 /* Message input */
@@ -218,6 +235,7 @@ input[type], textarea {
   left: 275px;
   transition: left 1s ease;
   height: 38px;
+  z-index: 500;
 }
 
 .sidebar-transition-hide .message-form {
