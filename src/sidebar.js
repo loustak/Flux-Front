@@ -5,7 +5,7 @@ export default class SideBar extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {discussions: ''};
+    this.state = {discussions: '', currentCommunityId: null};
     this.getCommunityDiscussions = this.getCommunityDiscussions.bind(this);
 
     const communityId = this.props.cookies.get('communityId');
@@ -15,6 +15,10 @@ export default class SideBar extends React.Component {
   }
 
   getCommunityDiscussions(communityId) {
+    if (this.state.currentCommunityId === communityId) { return; }
+
+    console.warn("Loading discussions !");
+
     this.props.cookies.set('communityId', communityId, {path: '/'});
     fetch(process.env.REACT_APP_API_PATH + '/communities/' + communityId + '/discussions', {
       method: 'get',
@@ -27,7 +31,12 @@ export default class SideBar extends React.Component {
     .then(
       (result) => {
         if (result.success) {
-          this.setState({discussions: result.discussions});
+          this.setState({discussions: result.discussions, currentCommunityId: communityId}, () => {
+            if (result.discussions.length > 0) {
+              const index = result.discussions[0];
+              this.props.onDiscussionClick(index.id);
+            }
+          });
         } else {
           this.setState({finished: true, error: true});
         }
