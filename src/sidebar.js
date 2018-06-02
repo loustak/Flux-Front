@@ -5,8 +5,9 @@ export default class SideBar extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {discussions: '', currentCommunityId: null};
+    this.state = {discussions: '', currentCommunityId: ''};
     this.getCommunityDiscussions = this.getCommunityDiscussions.bind(this);
+    this.createCommunity = this.createCommunity.bind(this);
 
     const communityId = this.props.cookies.get('communityId');
     if (communityId !== undefined) {
@@ -18,6 +19,12 @@ export default class SideBar extends React.Component {
     if (this.state.currentCommunityId === communityId) {
       // Same community, don't fetch the server again
       return; 
+    }
+
+    if (communityId === undefined) {
+      // TODO: Split this in another function
+      // When we want to refresh the community id
+      communityId = this.state.currentCommunityId;
     }
 
     this.props.cookies.set('communityId', communityId, {path: '/'});
@@ -50,12 +57,39 @@ export default class SideBar extends React.Component {
       });
   }
 
+  createCommunity(name) {
+    fetch(process.env.REACT_APP_API_PATH + '/communities/' + this.state.currentCommunityId + '/discussions', {
+      method: 'post',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      },
+      body: JSON.stringify({
+        name: name
+      })
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          this.getCommunityDiscussions();
+        } else {
+          // TODO: Handle errors
+          console.error(result.errors);
+        }
+      },
+      (error) => {
+        // TODO: Handle errors
+        console.error(error);
+      });
+  }
+
   render() {
     return(
       <div className={'sidebar-wrapper ' + this.props.className}>
         <CommunitySideBar token={this.props.token} onCommunityClick={this.getCommunityDiscussions}/>
         <DiscussionsSideBar token={this.props.token} discussions={this.state.discussions} 
-          discussionRefresh={this.getCommunityDiscussions} onClick={this.props.onDiscussionClick} />
+        discussionRefresh={this.getCommunityDiscussions} create={this.createCommunity} onClick={this.props.onDiscussionClick} />
       </div>
     )
   }
@@ -317,11 +351,15 @@ class DiscussionsSideBar extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {modal: false, discussion: {id: '', name: ''}};
+    this.state = {modal: false, createModal: false, discussion: {id: '', name: ''}, discussionName: ''};
     this.toggle = this.toggle.bind(this);
     this.editHandler = this.editHandler.bind(this);
     this.editOnChange = this.editOnChange.bind(this);
     this.saveEdit = this.saveEdit.bind(this);
+    this.delete = this.delete.bind(this);
+    this.toggleCreate = this.toggleCreate.bind(this);
+    this.createOnChange = this.createOnChange.bind(this);
+    this.createWrapper = this.createWrapper.bind(this);
   }
 
   toggle() {
@@ -345,8 +383,6 @@ class DiscussionsSideBar extends React.Component {
   }
 
   saveEdit(event) {
-    event.preventDefault();
-    console.log(this.state.discussion.id);
     fetch(process.env.REACT_APP_API_PATH + '/discussions/' + this.state.discussion.id, {
       method: 'put',
       headers: {
@@ -361,7 +397,7 @@ class DiscussionsSideBar extends React.Component {
     .then(
       (result) => {
         if (result.success) {
-          this.props.discussionRefresh(result.discussion.community_id);
+          this.props.discussionRefresh();
           this.toggle();
         } else {
           // TODO: Handle errors
@@ -372,6 +408,47 @@ class DiscussionsSideBar extends React.Component {
         // TODO: Handle errors
         console.error(error);
       });
+  }
+
+  delete() {
+    fetch(process.env.REACT_APP_API_PATH + '/discussions/' + this.state.discussion.id, {
+      method: 'delete',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      },
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          this.props.discussionRefresh();
+          this.toggle();
+        } else {
+          // TODO: Handle errors
+          console.error(result.errors);
+        }
+      },
+      (error) => {
+        // TODO: Handle errors
+        console.error(error);
+      });
+  }
+
+  toggleCreate(event) {
+    this.setState({
+      createModal: !this.state.createModal
+    });
+  }
+
+  createOnChange(event) {
+    this.setState({discussionName: event.target.value});
+  }
+
+  createWrapper() {
+    this.props.create(this.state.discussionName);
+    this.setState({discussionName: ''});
+    this.toggleCreate();
   }
 
   render() {
@@ -386,8 +463,21 @@ class DiscussionsSideBar extends React.Component {
     return(
       <div className="discussion-sidebar-wrapper">
         <Nav>
+          <DiscussionCreate onClick={this.toggleCreate}/>
           {discussions}
         </Nav>
+
+        <Modal centered isOpen={this.state.createModal} toggle={this.toggleCreate}>
+          <ModalHeader toggle={this.toggleCreate}>Create a discussion</ModalHeader>
+          <ModalBody>
+              <Form autoComplete="off" className="form-join-community">
+                <div className="text-center autocomplete">
+                  <Input placeholder="Discussion name" value={this.state.discussionName} onChange={this.createOnChange} />
+                  <Button color="secondary" onClick={this.createWrapper}>Create</Button>
+                </div>
+              </Form>
+          </ModalBody>
+        </Modal>
 
         <Modal centered isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle}>Edit a discussion</ModalHeader>
@@ -395,9 +485,15 @@ class DiscussionsSideBar extends React.Component {
               <Form autoComplete="off" className="form-join-community">
                 <div className="text-center autocomplete">
                   <Input placeholder="Discussion name" value={this.state.discussion.name} onChange={this.editOnChange} />
-                  <Button color="secondary" onClick={this.saveEdit} >Save</Button>
+                  <Button color="secondary" onClick={this.saveEdit}>Save</Button>
                 </div>
               </Form>
+          </ModalBody>
+          <ModalHeader>Delete the discussion</ModalHeader>
+          <ModalBody>
+            <div className="text-center">
+              <Button color="danger" onClick={this.delete}>Delete</Button>
+            </div>
           </ModalBody>
         </Modal>
       </div>
@@ -413,6 +509,19 @@ class Discussion extends React.Component {
         <div>
           <a className="discussion-item text-lowercase" onClick={() => this.props.onClick(this.props.id)}>{this.props.name}</a>
           <a className="edit" href="/" onClick={(event) => {this.props.onEdit(event, this.props.id, this.props.name)}}>edit</a>
+        </div>
+      </NavItem>
+    )
+  }
+}
+
+class DiscussionCreate extends React.Component {
+
+  render() {
+    return (
+      <NavItem className="discussion-item-wrapper">
+        <div>
+          <a className="discussion-item text-lowercase" onClick={this.props.onClick}>create a discussion</a>
         </div>
       </NavItem>
     )

@@ -130,6 +130,7 @@ input[type], textarea {
   color: #fff !important;
   cursor: pointer;
   float: right;
+  padding-right: 5px;
 }
 
 .discussion-item-wrapper:hover .edit {
