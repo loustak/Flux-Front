@@ -112,7 +112,6 @@ class HomeAuth extends React.Component {
   }
 
   sendMessage(data) {
-    console.log("Message sent: " + data);
     const channel = this.state.channel;
     if (channel == null) { return false; }
     channel.push('new_message', data);

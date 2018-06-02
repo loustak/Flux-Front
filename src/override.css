@@ -221,34 +221,14 @@ input[type], textarea {
   padding-left: 0px;
 }
 
-.form-join-community input {
-  width: 85%;
-  display: inline;
-}
-
-@media screen and (max-width: 500px) {
-  .form-join-community input {
-    width: 75%;
-  }  
-}
-
 .form-join-community button {
-  margin: 5px;
-  margin-top: 1px;
-}
-
-.form-create-community input {
-  width: 80%;
-  display: inline;
-}
-
-@media screen and (max-width: 500px) {
-  .form-create-community input {
-    width: 75%;
-  }  
+  padding-left: 25px;
+  padding-right: 25px;
+  margin-top: 5px;
 }
 
 .form-create-community button {
-  margin: 5px;
-  margin-top: 1px;
+  padding-left: 25px;
+  padding-right: 25px;
+  margin-top: 5px;
 }

@@ -15,9 +15,10 @@ export default class SideBar extends React.Component {
   }
 
   getCommunityDiscussions(communityId) {
-    if (this.state.currentCommunityId === communityId) { return; }
-
-    console.warn("Loading discussions !");
+    if (this.state.currentCommunityId === communityId) {
+      // Same community, don't fetch the server again
+      return; 
+    }
 
     this.props.cookies.set('communityId', communityId, {path: '/'});
     fetch(process.env.REACT_APP_API_PATH + '/communities/' + communityId + '/discussions', {
@@ -39,11 +40,13 @@ export default class SideBar extends React.Component {
           });
         } else {
           this.setState({finished: true, error: true});
+          // TODO: Do something with this error
         }
       },
 
       (error) => {
         this.setState({finished: true, error: true});
+        // TODO: Do something with this error
       });
   }
 
@@ -110,13 +113,30 @@ class CommunitySideBar extends React.Component {
 
 class Community extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      tooltipOpen: false
+    };
+  }
+
+  toggle() {
+    this.setState({
+      tooltipOpen: !this.state.tooltipOpen
+    });
+  }
+
   render() {
     return (
-      <NavItem className="community-item-wrapper">
-        <Button className="community-item text-uppercase" onClick={() => this.props.onClick(this.props.id)}>
-          {this.props.name.charAt(0)}
-        </Button>
-      </NavItem>
+      <React.Fragment>
+        <NavItem id={'tooltip-target-' + this.props.id} className="community-item-wrapper">
+          <Button className="community-item text-uppercase" title={this.props.name} onClick={() => this.props.onClick(this.props.id)}>
+            {this.props.name.charAt(0)}
+          </Button>
+        </NavItem>
+      </React.Fragment>
     )
   }
 }
@@ -158,11 +178,46 @@ class CommunityJoinPopup extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {joinName: '', createName: ''};
+    this.state = {joinName: '', createName: '', communities: []};
+    this.loadCommunities = this.loadCommunities.bind(this);
     this.joinChangeHandler = this.joinChangeHandler.bind(this);
     this.joinHandler = this.joinHandler.bind(this);
     this.createChangeHandler = this.createChangeHandler.bind(this);
     this.createHandler = this.createHandler.bind(this);
+    this.loadCommunities();
+  }
+
+  loadCommunities() {
+    fetch(process.env.REACT_APP_API_PATH + '/communities/all', {
+      method: 'get',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer: ' + this.props.token,
+      }
+    })
+    .then(res => res.json())
+    .then(
+      (result) => {
+        if (result.success) {
+          //TODO: This is a horrible strategy because communities name aren't uniques
+          // Use autocomplete in the future
+          var communities = {};
+          for (let index in result.communities) {
+            var community = result.communities[index];
+            communities[community.name.toUpperCase()] = community.id;
+          }
+
+          this.setState({communities: communities});
+        } else {
+          // TODO: Do something with the error
+          console.log("Error");
+        }
+      },
+
+      (error) => {
+        // TODO: Do something with the error
+        console.log("Error");
+      });
   }
 
   joinChangeHandler(event) {
@@ -174,7 +229,11 @@ class CommunityJoinPopup extends React.Component {
   }
 
   joinHandler() {
-    fetch(process.env.REACT_APP_API_PATH + '/communities/' + this.state.communityId + '/join', {
+    // TODO: Horrible, because communities name aren't unique.
+    // Use something like autocomplete to get unique id from a list of communities
+    const communityId = this.state.communities[this.state.joinName.toUpperCase()];
+
+    fetch(process.env.REACT_APP_API_PATH + '/communities/' + communityId + '/join', {
       method: 'post',
       headers: {
           'Content-Type': 'application/json',
@@ -185,15 +244,16 @@ class CommunityJoinPopup extends React.Component {
     .then(
       (result) => {
         if (result.success) {
-          console.log("Community joined");
           this.props.onCommunityChange();
           this.props.toggle();
         } else {
+          // TODO: Do something with the error
           console.log("Error");
         }
       },
 
       (error) => {
+        // TODO: Do something with the error
         console.log("Error");
       });
   }
@@ -231,16 +291,20 @@ class CommunityJoinPopup extends React.Component {
       <Modal centered isOpen={this.props.isOpen} toggle={this.props.toggle} className={this.props.className}>
         <ModalHeader toggle={this.props.toggle}>Join a community</ModalHeader>
         <ModalBody>
-            <Form className="form-join-community">
-              <Input placeholder="Community name" onChange={this.joinChangeHandler} />
-              <Button color="secondary" onClick={this.joinHandler}>Join</Button>
+            <Form autoComplete="off" className="form-join-community">
+              <div className="text-center autocomplete">
+                <Input placeholder="Community name" onChange={this.joinChangeHandler} />
+                <Button color="secondary" onClick={this.joinHandler}>Join</Button>
+              </div>
             </Form>
         </ModalBody>
         <ModalBody>
             <p>Or create one</p>
             <Form className="form-create-community">
-              <Input placeholder="Community name" onChange={this.createChangeHandler} />
-              <Button color="secondary" onClick={this.createHandler}>Create</Button>
+              <div className="text-center">
+                <Input placeholder="Community name" onChange={this.createChangeHandler} />
+                <Button color="secondary" onClick={this.createHandler}>Create</Button>
+              </div>
             </Form>
         </ModalBody>
         <ModalFooter>
