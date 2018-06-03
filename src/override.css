@@ -70,6 +70,14 @@ input[type], textarea {
   border-color: #121212;
 }
 
+#text-logo {
+  display: inline-block;
+}
+
+#picture-logo {
+  vertical-align: unset;
+}
+
 /* Home auth main container */
 .home-auth-container {
   margin: 0;
@@ -166,6 +174,7 @@ input[type], textarea {
 .main-content {
   position: relative;
   overflow-x: hidden;
+  height: 100%;
 }
 
 @media screen and (max-width: 640px) {
