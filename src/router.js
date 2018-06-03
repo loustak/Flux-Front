@@ -1,9 +1,9 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
 import { WithCookiesAuth } from './auth.js';
 import { NavBarVisitor } from './navbar-visitor.js';
-import { Container } from 'reactstrap';
+import { Container, Jumbotron } from 'reactstrap';
 import { WithCookiesHomeAuth } from './home-auth.js';
 import { HomeVisitor } from './home-visitor.js';
 import { Register } from './register.js';
@@ -29,11 +29,14 @@ export class RouterLogged extends React.Component {
     // TODO: Handle 404 pages
     return(
       <React.Fragment>  
-        <Route exact={true} path="/" component={() =>
-          <CookiesProvider>
-            <WithCookiesHomeAuth cookies={this.props.cookies} token={this.props.token} />
-          </CookiesProvider>
-        } />
+        <Switch>
+          <Route exact={true} path="/" component={() =>
+            <CookiesProvider>
+              <WithCookiesHomeAuth cookies={this.props.cookies} token={this.props.token} />
+            </CookiesProvider>
+          } />
+          <Route component={PageNotFound} />
+        </Switch>
       </React.Fragment>
     );
   }
@@ -45,11 +48,29 @@ export class RouterVisitor extends React.Component {
       <React.Fragment>
         <NavBarVisitor />
         <Container>
-          <Route exact={true} path="/" component={HomeVisitor} />
-          <Route exact={true} path="/register/" component={Register} />
-          <Route exact={true} path="/sign-in/" component={SignIn} />
+          <Switch>
+            <Route exact={true} path="/" component={HomeVisitor} />
+            <Route exact={true} path="/register/" component={Register} />
+            <Route exact={true} path="/sign-in/" component={SignIn} />
+            <Route component={PageNotFound} />
+          </Switch>
         </Container>
       </React.Fragment>
+    )
+  }
+}
+
+class PageNotFound extends React.Component {
+
+  render() {
+    return(
+      <Jumbotron fluid>
+        <div className="container-fluid flux-container">
+          <h1>404</h1>
+          <p className="lead">Oups... This page does not exists :'(</p>
+          <a href="/">Get back to home</a>
+        </div>
+      </Jumbotron>
     )
   }
 }
