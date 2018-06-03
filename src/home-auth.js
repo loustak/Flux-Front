@@ -54,8 +54,11 @@ class HomeAuth extends React.Component {
 
     const socket = new Socket(process.env.REACT_APP_SOCKET_PATH, {
       params: {token: token},
-      // TODO: Hide sockets messages in production
-      logger: (kind, message, data) => {console.log(kind + ': ' + message + ' ' + data)}
+      /*
+      logger: (kind, message, data) => {
+        console.log(kind + ': ' + message + ' ' + data)
+      }
+      */
     });
     socket.connect();
     this.setState({socket: socket}, () => {
