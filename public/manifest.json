@@ -8,22 +8,7 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo_32.png",
-      "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
-      "src": "logo_64.png",
-      "sizes": "64x64",
-      "type": "image/png"
-    },
-    {
-      "src": "logo_128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    },
-    {
-      "src": "logo_256.png",
+      "src": "logo_white_256.png",
       "sizes": "256x256",
       "type": "image/png"
     }
